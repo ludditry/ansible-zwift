@@ -1,0 +1,7 @@
+---
+- name: restart rsync
+  service: name=rsync state=restarted
+
+- name: kick udev
+  shell: udevadm trigger --type=devices --sysname-match={{item}}
+  with_items: swift_devices

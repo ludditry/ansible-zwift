@@ -1,0 +1,64 @@
+#
+# {{ansible_managed}}
+#
+
+[DEFAULT]
+backlog = 4096
+bind_ip = 0.0.0.0
+bind_port = 6001
+db_preallocation = off
+devices = /srv/node
+disable_fallocate = false
+fallocate_reserve = 0
+log_statsd_default_sample_rate = 1.0
+log_statsd_host =
+log_statsd_metric_prefix =
+log_statsd_port = 8125
+log_statsd_sample_rate_factor = 1.0
+swift_dir = /etc/swift
+user = swift
+workers = 6
+
+[app:container-server]
+allow_versions = true
+conn_timeout = 0.5
+log_facility = LOG_LOCAL1
+node_timeout = 3
+use = egg:swift#container
+
+[container-auditor]
+containers_per_second = 200
+interval = 1800
+log_facility = LOG_LOCAL2
+
+[container-replicator]
+concurrency = 6
+conn_timeout = 0.5
+interval = 30
+log_facility = LOG_LOCAL2
+max_diffs = 100
+node_timeout = 15
+per_diff = 1000
+reclaim_age = 604800
+
+[container-sync]
+
+[container-updater]
+account_suppression_time = 60
+concurrency = 4
+conn_timeout = 5
+interval = 300
+log_facility = LOG_LOCAL2
+node_timeout = 15
+
+[filter:healthcheck]
+use = egg:swift#healthcheck
+
+[filter:recon]
+log_facility = LOG_LOCAL2
+recon_cache_path = /var/cache/swift
+recon_lock_path = /var/lock/swift
+use = egg:swift#recon
+
+[pipeline:main]
+pipeline = healthcheck recon container-server

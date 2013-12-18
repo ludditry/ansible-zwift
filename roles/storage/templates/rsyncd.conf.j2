@@ -1,0 +1,28 @@
+#
+# {{ansible_managed}}
+#
+
+uid = swift
+gid = swift
+
+log file = /var/log/rsyncd.log
+pid file = /var/run/rsyncd.pid
+address = {{swift_rsync_bind_address}}
+
+[account]
+max connections = {{swift_rsync_account_connections}}
+path = /srv/node/
+read only = false
+lock file = /var/lock/account.lock
+
+[container]
+max connections = {{swift_rsync_container_connections}}
+path = /srv/node/
+read only = false
+lock file = /var/lock/container.lock
+
+[object]
+max connections = {{swift_rsync_object_connections}}
+path = /srv/node/
+read only = false
+lock file = /var/lock/object.lock

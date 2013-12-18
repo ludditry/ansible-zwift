@@ -1,0 +1,62 @@
+---
+- name: Setup .ssh
+  tags: keys
+  file: dest=/root/.ssh mode=0700 state=directory
+  remote_user: root
+
+- name: Upload SSH keys
+  tags: keys
+  copy: src={{item|basename}} dest=/root/.ssh/{{item|basename}} mode=0600
+  with_fileglob: id_*
+
+- name: Add authorized_keys
+  tags: keys
+  lineinfile:
+    dest: /root/.ssh/authorized_keys
+    insertafter: EOF
+    line: "{{lookup('file', item)}}"
+    state: present
+  with_fileglob: id_*pub
+
+- name: Update packages
+  tags: packages
+  apt: update_cache=yes upgrade=dist
+
+- name: Add swiftops user
+  tags: keys
+  user: name="{{oper_user}}" createhome=yes password="*" groups=sudo shell=/bin/bash
+
+- name: Make /home/swiftops/.ssh
+  tags: keys
+  file: path=/home/{{oper_user}}/.ssh owner="{{oper_user}}" mode=0700 state=directory
+
+- name: Add swiftops authorized_keys
+  tags: keys
+  lineinfile:
+    dest: /home/{{oper_user}}/.ssh/authorized_keys
+    create: yes
+    insertafter: EOF
+    line: "{{lookup('file', item)}}"
+    state: present
+  with_fileglob: id_*pub
+
+- name: Set swiftops authorized_keys permissions
+  file: path=/home/{{oper_user}}/.ssh/authorized_keys mode=0700 owner="{{oper_user}}"
+
+- name: make swiftops a nopasswd sudoer
+  copy:
+    dest: /etc/sudoers.d/swiftops
+    content: "{{oper_user}} ALL=(ALL:ALL) NOPASSWD:ALL\n"
+    owner: root
+    mode: 0440
+
+- name: add swift repo key
+  apt_key:
+    url: http://download.opensuse.org/repositories/home:/rpedde:/openstack/xUbuntu_12.04/Release.key
+    state: present
+
+- name: add swift repo
+  apt_repository:
+    repo: "deb http://download.opensuse.org/repositories/home:/rpedde:/openstack/xUbuntu_12.04/ /"
+    state: present
+    update_cache: yes

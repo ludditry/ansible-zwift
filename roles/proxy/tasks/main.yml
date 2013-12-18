@@ -1,0 +1,13 @@
+---
+- name: ensure proxy packages
+  apt: pkg={{item}} state=present
+  with_items:
+    - swift-proxy
+    - memcached
+
+- name: ensure extra proxy packages
+  apt: pkg={{item}} state=present
+  with_items: swift_proxy_extra_packages
+
+- name: drop a proper proxy-server.conf
+  template: dest=/etc/swift/proxy-server.conf src=proxy-server.conf.j2 owner=swift group=swift mode=0644

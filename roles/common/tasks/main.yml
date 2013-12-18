@@ -1,0 +1,16 @@
+---
+- name: ensure swift user
+  user: name=swift uid=2000 comment="Swift User" createhome=no password=* shell=/bin/false home=/etc/swift
+
+- name: make swift directory
+  file: path=/etc/swift owner=swift group=swift mode=755 state=directory
+
+- name: drop swift.conf
+  template: src=swift.conf.j2 dest=/etc/swift/swift.conf owner=swift group=swift mode=0600
+
+- name: Ensure common extra packages
+  apt: pkg={{item}} state=present
+  with_items: swift_common_extra_packages
+
+- name: Ensure cache directory
+  file: path=/var/cache/swift owner=swift group=swift mode=755 state=directory

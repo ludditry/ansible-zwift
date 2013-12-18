@@ -1,0 +1,4 @@
+---
+swift_role: storage
+swift_hwtype: rax
+swift_devices: [ "xvdb" ]

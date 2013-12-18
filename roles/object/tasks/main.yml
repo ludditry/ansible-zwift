@@ -1,0 +1,6 @@
+---
+- name: Install packages
+  apt: pkg=swift-object
+
+- name: drop object-server conf
+  template: dest=/etc/swift/object-server.conf src=object-server.conf.j2 owner=swift mode=0644

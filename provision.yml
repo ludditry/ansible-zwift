@@ -1,0 +1,57 @@
+---
+- name: Provision Networks
+  tags: provision-networks
+  hosts: local
+  gather_facts: false
+  tasks:
+    - name: Provision networks
+      local_action:
+        module: rax_network
+        region: "{{rax_region}}"
+        username: "{{rax_username}}"
+        api_key: "{{rax_api_key}}"
+        label: "{{prefix}}-swift"
+        cidr: "172.20.0.0/24"
+        state: present
+
+- name: Provision Hosts
+  tags: provision-hosts
+  hosts: prov-template
+  gather_facts: false
+  tasks:
+  - name: Provision hosts
+    tags: provision-hosts
+    local_action:
+      module: rax
+      name: "{{prefix}}-{{inventory_hostname}}"
+      keypair: "{{rax_keypair}}"
+      networks: "{{rax_net_labels}}"
+      region: "{{rax_region}}"
+      username: "{{rax_username}}"
+      api_key: "{{rax_api_key}}"
+      flavor: "{{rax_prov_flavor}}"
+      image: "{{rax_prov_image}}"
+      disk_config: "{{rax_diskconfig}}"
+      meta: { ansible_groups: "{{prefix}},zone-{{swift_zone}},{{swift_role}}" }
+      wait: yes
+      state: present
+    register: rax
+
+- name: Provision Disks
+  tags: provision-disks
+  hosts: prov-template:&storage
+  gather_facts: false
+  tasks:
+  - name: Provision disks
+    tags: provision-disks
+    local_action:
+      module: rax_cbs
+      attach_to: "{{prefix}}-{{inventory_hostname}}"
+      region: "{{rax_region}}"
+      username: "{{rax_username}}"
+      api_key: "{{rax_api_key}}"
+      cbs_name: "{{prefix}}-{{inventory_hostname}}"
+      cbs_size: 100
+      cbs_type: SATA
+      wait: yes
+      state: present

@@ -1,0 +1,8 @@
+#
+# {{ansible_managed}}
+#
+### Rules Virtual Machines
+{% for disk in swift_devices %}
+KERNELS=="{{disk}}", ENV{DEVTYPE}=="disk" NAME="swift/u{{loop.index - 1}}"
+KERNELS=="{{disk}}", ENV{DEVTYPE}=="partition" NAME="swift/u{{loop.index - 1}}p%n"
+{% endfor %}

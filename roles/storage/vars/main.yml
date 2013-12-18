@@ -1,0 +1,6 @@
+---
+swift_storage_extra_packages: []
+swift_rsync_bind_address: 0.0.0.0
+swift_rsync_account_connections: 2
+swift_rsync_container_connections: 2
+swift_rsync_object_connections: 2

@@ -1,0 +1,63 @@
+#
+# {{ansible_managed}}
+#
+
+[DEFAULT]
+backlog = 4096
+bind_ip = 0.0.0.0
+bind_port = 6000
+devices = /srv/node
+disable_fallocate = false
+fallocate_reserve = 0
+log_statsd_default_sample_rate = 1.0
+log_statsd_host =
+log_statsd_metric_prefix =
+log_statsd_port = 8125
+log_statsd_sample_rate_factor = 1.0
+swift_dir = /etc/swift
+user = swift
+workers = 8
+
+[app:object-server]
+conn_timeout = 0.5
+log_facility = LOG_LOCAL1
+mb_per_sync = 64
+node_timeout = 3
+use = egg:swift#object
+
+[filter:healthcheck]
+use = egg:swift#healthcheck
+
+[filter:recon]
+log_facility = LOG_LOCAL2
+recon_cache_path = /var/cache/swift
+recon_lock_path = /var/lock/swift
+use = egg:swift#recon
+
+[object-auditor]
+log_facility = LOG_LOCAL2
+recon_cache_path = /var/cache/swift
+recon_enable = yes
+
+[object-replicator]
+concurrency = 6
+http_timeout = 60
+lockup_timeout = 1800
+log_facility = LOG_LOCAL2
+recon_cache_path = /var/cache/swift
+recon_enable = yes
+rsync_io_timeout = 30
+rsync_timeout = 900
+run_pause = 30
+
+[object-updater]
+concurrency = 3
+conn_timeout = 5
+log_facility = LOG_LOCAL2
+node_timeout = 60
+recon_cache_path = /var/cache/swift
+recon_enable = yes
+slowdown = 0.01
+
+[pipeline:main]
+pipeline = healthcheck recon object-server

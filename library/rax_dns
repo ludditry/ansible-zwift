@@ -1,0 +1,234 @@
+#!/usr/bin/python -tt
+# This file is part of Ansible
+#
+# Ansible is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Ansible is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Ansible.  If not, see <http://www.gnu.org/licenses/>.
+
+DOCUMENTATION = '''
+---
+module: rax_dns
+short_description: create / delete dns records on Rackspace DNS
+description:
+     - creates / deletes a Rackspace Public Cloud dns record
+version_added: "1.4"
+options:
+  state:
+    description:
+     - Indicate desired state of the resource
+    choices: ['present', 'absent']
+    default: present
+  credentials:
+    description:
+     - File to find the Rackspace credentials in (ignored if C(api_key) and
+       C(username) are provided)
+    default: null
+    aliases: ['creds_file']
+  api_key:
+    description:
+     - Rackspace API key (overrides C(credentials))
+  username:
+    description:
+     - Rackspace username (overrides C(credentials))
+  type:
+    description:
+     - rr type.  A, MX, etc.
+    default: null
+  domain:
+    description:
+     - domain to add rr to (domain.com)
+    default: null
+  rr_name:
+    description:
+     - rr name (host)
+    default: null
+  rr_data:
+    description:
+      - data for the rr.  IP address for A, dns name for MX, etc
+    default: null
+  priority:
+    description:
+     - required for MX and SRV, forbidden otherwise
+    default: null
+  ttl:
+    description:
+     - ttl for record.  must be greater than 300.
+    default: domain ttl, or 3600 if no ttl specified at domain level
+  comment:
+    description:
+     - Comment for the RR
+    default: null
+  region:
+    description:
+     - Region to create the network in
+    default: DFW
+requirements: [ "pyrax" ]
+author: Christopher H. Laco, Jesse Keating
+notes:
+  - The following environment variables can be used, C(RAX_USERNAME),
+    C(RAX_API_KEY), C(RAX_CREDS), C(RAX_CREDENTIALS), C(RAX_REGION).
+  - C(RAX_CREDENTIALS) and C(RAX_CREDS) points to a credentials file
+    appropriate for pyrax
+  - C(RAX_USERNAME) and C(RAX_API_KEY) obviate the use of a credentials file
+  - C(RAX_REGION) defines a Rackspace Public Cloud region (DFW, ORD, LON, ...)
+'''
+
+EXAMPLES = '''
+- name: Register a DNS entry
+  gather_facts: False
+
+  tasks:
+    - name: Register DNS
+      local_action:
+        module: rax_dns
+        credentials: ~/.raxpub
+        type: "A"
+        name: "myhost.example.com"
+        data: "127.0.0.1"
+        state: present
+'''
+
+import sys
+import os
+
+try:
+    import pyrax
+    import pyrax.utils
+    from pyrax import exc
+except ImportError:
+    print("failed=True msg='pyrax required for this module'")
+    sys.exit(1)
+
+
+def cloud_dns(module, state, rr_type, domain,
+              rr_name, rr_data, priority, ttl, comment):
+    for arg, value in dict(state=state, rr_type=rr_type,
+                           rr_name=rr_name, rr_data=rr_data).iteritems():
+        if not value:
+            module.fail_json(msg='%s is required for cloud_dns' % arg)
+
+    if (rr_type.upper() == 'MX' or rr_type.upper() == 'SRV'):
+        if not priority:
+            module.fail_json(msg='priority is required for MX or SRV records')
+    else:
+        if priority:
+            module.fail_json(msg='priority is only valid for MX or SRV records')
+
+    changed=False
+
+    dns = pyrax.cloud_dns
+
+    try:
+        domainlist = dict([(d.name, d)
+                           for d in
+                           list(dns.get_domain_iterator())])
+    except Exception, e:
+        module.fail_json(msg='Error listing domains: %s' % e.message)
+
+    # figure out what domain to throw the rr into.  If the domain is
+    # specified, then the rr is registered under that domain with the
+    # rr_name.  If the domain is not specified, then we'll assume that
+    # the rr_name is a fqdn, and try and find the most appropriate
+    # domain (longest) to register it under.
+    real_domain = domain
+    real_rr_name = rr_name
+
+    if domain is not None:
+        # find longest registered domain
+        domain_array = rr_name.split('.')
+        rr_name_array = []
+
+        while domain_array:
+            if '.'.join(domain_array) in domainlist:
+                real_domain = '.'.join(domain_array)
+                real_rr_name = '.'.join(rr_name_array)
+                break
+
+            rr_name_array.append(domain_array.pop(0))
+
+    if not real_domain:
+        module.fail_json(msg='Could not find appropriate domain to add rr to')
+
+    dom = domainlist[real_domain]
+
+    rrlist=dict([("%s:%s" % (r.name, r.type), r)
+                 for r in
+                 list(dns.get_record_iterator(dom))])
+
+    print rrlist
+
+    module.exit_json(changed=changed)
+
+
+def main():
+    module = AnsibleModule(
+        argument_spec=dict(
+            state=dict(default='present',
+                       choices=['present', 'absent']),
+            credentials=dict(aliases=['creds_file']),
+            api_key=dict(),
+            username=dict(),
+            region=dict(),
+            rr_type=dict(),
+            domain=dict(),
+            rr_name=dict(),
+            rr_data=dict(),
+            priority=dict(),
+            ttl=dict(),
+            comment=dict(default='added by ansible run')
+        )
+    )
+
+    credentials = module.params.get('credentials')
+    api_key = module.params.get('api_key')
+    username = module.params.get('username')
+    region = module.params.get('region')
+    state = module.params.get('state')
+
+    rr_type = module.params.get('type')
+    domain = module.params.get('domain')
+    rr_name = module.params.get('rr_name')
+    rr_data = module.params.get('rr_data')
+    priority = module.params.get('priority')
+    ttl = module.params.get('ttl')
+    comment = module.params.get('comment')
+
+    try:
+        username = username or os.environ.get('RAX_USERNAME')
+        api_key = api_key or os.environ.get('RAX_API_KEY')
+        credentials = (credentials or
+                       os.environ.get('RAX_CREDENTIALS') or
+                       os.environ.get('RAX_CREDS_FILE'))
+        region = region or os.environ.get('RAX_REGION')
+
+    except KeyError, e:
+        module.fail_json(msg='Unable to load %s' % e.message)
+
+    try:
+        pyrax.set_setting("identity_type", "rackspace")
+        if api_key and username:
+            pyrax.set_credentials(username, api_key=api_key, region=region)
+        elif credentials:
+            credentials = os.path.expanduser(credentials)
+            pyrax.set_credential_file(credentials, region=region)
+        else:
+            raise Exception('No credentials supplied!')
+    except Exception, e:
+        module.fail_json(msg='%s' % e.message)
+
+    cloud_dns(module, state, rr_type, domain, rr_name,
+              rr_data, priority, ttl, comment)
+
+# this is magic, see lib/ansible/module_common.py
+#<<INCLUDE_ANSIBLE_MODULE_COMMON>>
+
+main()

@@ -1,0 +1,27 @@
+[proxy]
+proxy
+
+[zone1]
+storage-z1
+
+[zone2]
+storage-z2
+
+[zone3]
+storage-z3
+
+[management]
+management
+
+[storage:children]
+zone1
+zone2
+zone3
+
+[prov-template:children]
+storage
+proxy
+management
+
+[local]
+localhost ansible_connection=local ansible_python_interpreter=/Users/rpedde/bin/pythonic

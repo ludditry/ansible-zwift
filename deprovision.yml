@@ -1,0 +1,51 @@
+---
+- name: Deprovision Hosts
+  tags: deprovision-hosts
+  hosts: "{{prefix}}"
+  gather_facts: false
+  tasks:
+  - name: Deprovision hosts
+    tags: deprovision-hosts
+    local_action:
+      module: rax
+      instance_ids: [ "{{rax_id}}" ]
+      region: "{{rax_region}}"
+      username: "{{rax_username}}"
+      api_key: "{{rax_api_key}}"
+      wait: yes
+      state: absent
+    register: rax
+
+- name: Deprovision Disks
+  tags: deprovision-disks
+  gather_facts: false
+  hosts: "{{prefix}}:&storage"
+  tasks:
+  - name: Deprovision disks
+    tags: deprovision-disks
+    local_action:
+      module: rax_cbs
+      region: "{{rax_region}}"
+      username: "{{rax_username}}"
+      api_key: "{{rax_api_key}}"
+      cbs_name: "{{prefix}}-{{inventory_hostname}}"
+      cbs_size: 100
+      cbs_type: SATA
+      wait: yes
+      state: absent
+
+- name: Deprovision Networks
+  tags: deprovision-networks
+  hosts: local
+  gather_facts: false
+  tasks:
+  - name: Deprovision networks
+    tags: deprovision-nets
+    local_action:
+      module: rax_network
+      region: "{{rax_region}}"
+      username: "{{rax_username}}"
+      api_key: "{{rax_api_key}}"
+      label: "{{prefix}}-swift"
+      cidr: "172.20.0.0/24"
+      state: absent

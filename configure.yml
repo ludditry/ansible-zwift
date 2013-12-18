@@ -1,0 +1,35 @@
+---
+- name: Base configs for all servers
+  tags: base
+  hosts: all
+  gather_facts: false
+  roles:
+  - {role: base}
+
+- name: Common configuration
+  tags: common
+  hosts: all
+  roles:
+  - {role: common}
+
+- name: Management configuration
+  tags: management
+  hosts: management
+  roles:
+  - {role: management}
+  - {role: keystone, when: "swift_install_keystone == true", tags: ['keystone']}
+
+- name: Storage configuration
+  tags: storage
+  hosts: storage
+  roles:
+  - {role: storage}
+  - {role: object, tags: ['object']}
+  - {role: container, tags: ['container']}
+  - {role: account, tags: ['account']}
+
+- name: Proxy configuration
+  tags: proxy
+  hosts: proxy
+  roles:
+  - {role: proxy}

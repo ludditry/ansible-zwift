@@ -1,0 +1,6 @@
+---
+- name: Install packages
+  apt: pkg=swift-container
+
+- name: drop container-server conf
+  template: dest=/etc/swift/container-server.conf src=container-server.conf.j2 owner=swift mode=0644

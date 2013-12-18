@@ -1,0 +1,310 @@
+#!/usr/bin/python -tt
+# This file is part of Ansible
+#
+# Ansible is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Ansible is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Ansible.  If not, see <http://www.gnu.org/licenses/>.
+
+DOCUMENTATION = '''
+---
+module: rax_cbs
+short_description: create / delete Rackspace cloud block storage
+description:
+     - creates / deletes a Rackspace cloud block storage and optionally
+       waits for it to be 'available'.
+version_added: "1.4"
+options:
+  api_key:
+    description:
+      - Rackspace API key (overrides I(credentials))
+  attach_as:
+    description:
+      - Device to attach volume as (if attach_to)
+    default: /dev/xbdb
+  attach_to:
+    description:
+      - Server to attach volume to (if creating)
+  cbs_name:
+    description:
+      - Name of the cbs volume
+  cbs_type:
+    description:
+      - Type of cbs volume to create
+    choices: ['SATA', 'SSD']
+    default: SATA
+  cbs_size:
+    description:
+      - size of CBS volume in GB (minimum 100)
+    default: 100
+  credentials:
+    description:
+      - File to find the Rackspace credentials in (ignored if I(api_key) and
+        I(username) are provided)
+    default: null
+    aliases: ['creds_file']
+  state:
+    description:
+      - Indicate desired state of the resource
+    choices: ['present', 'absent']
+    default: present
+  username:
+    description:
+      - Rackspace username (overrides I(credentials))
+  wait:
+    description:
+      - wait for the instance to be in state 'running' before returning
+    default: "no"
+    choices: [ "yes", "no" ]
+  wait_timeout:
+    description:
+      - how long before wait gives up, in seconds
+    default: 300
+requirements: [ "pyrax" ]
+author: Jesse Keating, Matt Martz
+notes:
+  - The following environment variables can be used, C(RAX_USERNAME),
+    C(RAX_API_KEY), C(RAX_CREDS_FILE), C(RAX_CREDENTIALS), C(RAX_REGION).
+  - C(RAX_CREDENTIALS) and C(RAX_CREDS_FILE) points to a credentials file
+    appropriate for pyrax. See U(https://github.com/rackspace/pyrax/blob/master/docs/getting_started.md#authenticating)
+  - C(RAX_USERNAME) and C(RAX_API_KEY) obviate the use of a credentials file
+  - C(RAX_REGION) defines a Rackspace Public Cloud region (DFW, ORD, LON, ...)
+'''
+
+EXAMPLES = '''
+- name: Build a CBS Volume
+  gather_facts: False
+  tasks:
+    - name: Build Volume
+      local_action:
+        module: rax_cbs
+        credentials: ~/.raxpub
+        cbs_name: cbs-volume-1
+        cbs_type: SSD
+        cbs_size: 100
+        wait: yes
+        state: present
+'''
+
+import sys
+import time
+import os
+import re
+from uuid import UUID
+from types import NoneType
+
+try:
+    import pyrax
+except ImportError:
+    print("failed=True msg='pyrax is required for this module'")
+    sys.exit(1)
+
+def pyrax_object_to_dict(obj):
+    instance = {}
+    for key in dir(obj):
+        value = getattr(obj, key)
+        if (isinstance(value, NON_CALLABLES) and not key.startswith('_')):
+            instance[key] = value
+    return instance
+
+def server_object_for_id(module, server_id):
+    uuid = None
+
+    try:
+        UUID(server_id)
+        uuid = server_id
+    except Exception as e:
+        pass
+
+    if uuid is None:
+        try:
+            for obj in pyrax.cloudservers.list():
+                if obj.name == server_id:
+                    return obj
+        except Exception as e:
+            module.fail_json(msg='Error listing servers: %s' % e.message)
+
+        module.fail_json(msg='Cannot find server "%s"' % server_id)
+
+
+    return pyrax.cloudservers.get(server_id)
+
+def find_volume(cbs_list, name, type=None, size=None):
+    for obj in cbs_list:
+        if ((name == obj.name) and
+            ((type is None) or (type == obj.volume_type)) and
+            ((size is None) or (int(size) == int(obj.size)))):
+            return obj
+    return None
+
+def wait_for_spinup(cbs_object, wait_timeout):
+    end_time = time.time() + wait_timeout
+    while((wait_timeout == 0) or (time.time() < end_time)):
+        try:
+            cbs_object.get()
+        except:
+            cbs_object.status='ERROR'
+
+        if cbs_object.status.upper() == 'ERROR':
+            return False
+
+        if cbs_object.status.upper() in ['AVAILABLE', 'ATTACHING', 'IN-USE']:
+            return True
+
+        time.sleep(5)
+
+    return False
+
+def wait_for_delete(cbs_object, wait_timeout):
+    end_time = time.time() + wait_timeout
+    while((wait_timeout == 0) or (time.time() < end_time)):
+        cbs_object.get()
+        time.sleep(5)
+
+    return False
+
+def wait_for_attach(cbs_object, wait_timeout):
+    end_time = time.time() + wait_timeout
+    while((wait_timeout == 0) or (time.time() < end_time)):
+        try:
+            cbs_object.get()
+        except:
+            return False
+
+        if cbs_object.status.upper() == 'IN-USE':
+            return True
+
+        time.sleep(5)
+
+    return False
+
+def cloudblockstorage(module, state, cbs_name, cbs_type, cbs_size,
+                      attach_to, attach_as, wait, wait_timeout):
+    changed = False
+
+    try:
+        cbs = pyrax.cloud_blockstorage
+        cbs_list = cbs.list()
+    except Exception as e:
+        module.fail_json(msg='Error listing cbs devices: %s' % e.message)
+
+    # act on the state
+    if state == 'present':
+        for arg, value in dict(cbs_name=cbs_name, cbs_type=cbs_type).iteritems():
+            if not value:
+                module.fail_json(msg='%s is required for the "rax_cbs" module' %
+                                     arg)
+
+        existing_volume = find_volume(cbs_list, cbs_name, cbs_type, cbs_size)
+        if existing_volume is None:
+            try:
+                existing_volume = cbs.create(name=cbs_name, size=cbs_size, volume_type=cbs_type)
+                changed = True
+
+                if wait is True or attach_to is not None:
+                    if not wait_for_spinup(existing_volume, wait_timeout):
+                        module.fail_json(msg='Error waiting for cbs device to become ready')
+
+            except Exception, e:
+                module.fail_json(msg='Error creating cbs device: %s' % e.message)
+
+        if attach_to is not None:
+            try:
+                server = server_object_for_id(module, attach_to)
+                existing_volume.attach_to_instance(server, mountpoint=attach_as)
+            except Exception, e:
+                module.fail_json(msg='Error attaching CBS device: %s' % e.message)
+
+            if wait is True:
+                if not wait_for_attach(existing_volume, wait_timeout):
+                    module.fail_json(msg='Error waiting for cbs device to attach')
+
+    elif state == 'absent':
+        if not cbs_name:
+            module.fail_json(msg='cbs_name is required for the "rax_cbs" module')
+
+        existing_volume = find_volume(cbs_list, cbs_name, cbs_type, cbs_size)
+        if existing_volume is not None:
+            try:
+                existing_volume.delete()
+                changed = True
+                if wait is True:
+                    if not wait_for_delete(existing_volume, wait_timeout):
+                        module.fail_json(msg='Error waiting for cbs device to delete')
+
+            except Exception as e:
+                module.fail_json(msg='Error deleting cbs device: %s' % e.message)
+
+    module.exit_json(changed=changed)
+
+def main():
+    module = AnsibleModule(
+        argument_spec=dict(
+            api_key=dict(),
+            attach_as=dict(default='/dev/xvdb'),
+            attach_to=dict(),
+            cbs_name=dict(),
+            cbs_type=dict(default='SATA', choices=['SATA', 'SSD']),
+            cbs_size=dict(default='100'),
+            credentials=dict(aliases=['creds_file']),
+            region=dict(),
+            state=dict(default='present', choices=['present', 'absent']),
+            username=dict(),
+            wait=dict(choices=BOOLEANS, default=False, type='bool'),
+            wait_timeout=dict(default=300),
+        ),
+    )
+
+    api_key = module.params.get('api_key')
+    attach_as = module.params.get('attach_as')
+    attach_to = module.params.get('attach_to')
+    cbs_name = module.params.get('cbs_name')
+    cbs_type = module.params.get('cbs_type')
+    cbs_size = module.params.get('cbs_size')
+    credentials = module.params.get('credentials')
+    region = module.params.get('region')
+    state = module.params.get('state')
+    username = module.params.get('username')
+    wait = module.params.get('wait')
+    wait_timeout = int(module.params.get('wait_timeout'))
+
+    # Setup the credentials and region
+    try:
+        username = username or os.environ.get('RAX_USERNAME')
+        api_key = api_key or os.environ.get('RAX_API_KEY')
+        credentials = (credentials or os.environ.get('RAX_CREDENTIALS') or
+                       os.environ.get('RAX_CREDS_FILE'))
+        region = region or os.environ.get('RAX_REGION')
+
+    except KeyError, e:
+        module.fail_json(msg='Unable to load %s' % e.message)
+
+    # setup the auth
+    try:
+        pyrax.set_setting('identity_type', 'rackspace')
+        if api_key and username:
+            pyrax.set_credentials(username, api_key=api_key, region=region)
+        elif credentials:
+            credentials = os.path.expanduser(credentials)
+            pyrax.set_credential_file(credentials, region=region)
+        else:
+            raise Exception('No credentials supplied!')
+    except Exception, e:
+        module.fail_json(msg='%s' % e.message)
+
+    cloudblockstorage(module, state, cbs_name, cbs_type, cbs_size,
+                      attach_to, attach_as, wait, wait_timeout)
+
+
+from ansible.module_utils.basic import *
+
+### invoke the module
+main()

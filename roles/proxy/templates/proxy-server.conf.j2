@@ -1,0 +1,97 @@
+#
+# {{ansible_managed}}
+#
+
+[DEFAULT]
+backlog = 4096
+bind_ip = 0.0.0.0
+bind_port = 8080
+log_statsd_default_sample_rate = 1.0
+log_statsd_host =
+log_statsd_metric_prefix =
+log_statsd_port = 8125
+log_statsd_sample_rate_factor = 1.0
+workers = 12
+
+[app:proxy-server]
+account_autocreate = true
+allow_account_management = false
+client_timeout = 60
+conn_timeout = 3.5
+error_suppression_interval = 60
+error_suppression_limit = 10
+log_facility = LOG_LOCAL0
+node_timeout = 60
+object_post_as_copy = true
+use = egg:swift#proxy
+
+[filter:account-quotas]
+use = egg:swift#account_quotas
+
+[filter:authtoken]
+admin_password = secrete
+admin_tenant_name = service
+admin_user = swift
+auth_host = 192.168.122.38
+auth_port = 5000
+auth_protocol = http
+cache = swift.cache
+delay_auth_decision = 1
+paste.filter_factory = keystoneclient.middleware.auth_token:filter_factory
+signing_dir = /var/cache/swift
+token_cache_time = 86100
+
+[filter:bulk]
+use = egg:swift#bulk
+
+[filter:cache]
+memcache_serialization_support = 2
+memcache_servers = 192.168.122.12:11211
+use = egg:swift#memcache
+
+[filter:catch_errors]
+use = egg:swift#catch_errors
+
+[filter:cname_lookup]
+use = egg:swift#cname_lookup
+
+[filter:container-quotas]
+use = egg:swift#container_quotas
+
+[filter:domain_remap]
+use = egg:swift#domain_remap
+
+[filter:formpost]
+use = egg:swift#tempurl
+
+[filter:healthcheck]
+use = egg:swift#healthcheck
+
+[filter:keystoneauth]
+operator_roles = admin, swiftoperator
+reseller_admin_role = reseller_admin
+use = egg:swift#keystoneauth
+
+[filter:list-endpoints]
+use = egg:swift#list_endpoints
+
+[filter:name_check]
+use = egg:swift#name_check
+
+[filter:proxy-logging]
+use = egg:swift#proxy_logging
+
+[filter:ratelimit]
+use = egg:swift#ratelimit
+
+[filter:slo]
+use = egg:swift#slo
+
+[filter:staticweb]
+use = egg:swift#staticweb
+
+[filter:tempurl]
+use = egg:swift#tempurl
+
+[pipeline:main]
+pipeline = catch_errors proxy-logging healthcheck cache ratelimit authtoken keystoneauth proxy-logging proxy-server
