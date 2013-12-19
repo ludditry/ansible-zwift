@@ -1,10 +1,14 @@
 ---
+# Default prefix
+prefix: c1
+
 #
 # Swift specific settings
 #
 
 swift_oper_user: "swiftops"
 swift_hash_prefix: "SOMERANDOMSTRING"
+swift_statsd_host: "{{prefix}}-management"
 
 # for ring creation
 swift_part_power: 10
@@ -14,9 +18,6 @@ swift_min_part_hours: 1
 #
 # RAX provisioning data
 #
-
-# Default prefix
-prefix: c1
 
 # Root ahoy!
 ansible_ssh_user: root
