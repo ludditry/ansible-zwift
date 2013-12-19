@@ -24,16 +24,16 @@
 
 - name: Add swiftops user
   tags: keys
-  user: name="{{oper_user}}" createhome=yes password="*" groups=sudo shell=/bin/bash
+  user: name="{{swift_oper_user}}" createhome=yes password="*" groups=sudo shell=/bin/bash
 
 - name: Make /home/swiftops/.ssh
   tags: keys
-  file: path=/home/{{oper_user}}/.ssh owner="{{oper_user}}" mode=0700 state=directory
+  file: path=/home/{{swift_oper_user}}/.ssh owner="{{swift_oper_user}}" mode=0700 state=directory
 
 - name: Add swiftops authorized_keys
   tags: keys
   lineinfile:
-    dest: /home/{{oper_user}}/.ssh/authorized_keys
+    dest: /home/{{swift_oper_user}}/.ssh/authorized_keys
     create: yes
     insertafter: EOF
     line: "{{lookup('file', item)}}"
@@ -41,12 +41,12 @@
   with_fileglob: id_*pub
 
 - name: Set swiftops authorized_keys permissions
-  file: path=/home/{{oper_user}}/.ssh/authorized_keys mode=0700 owner="{{oper_user}}"
+  file: path=/home/{{swift_oper_user}}/.ssh/authorized_keys mode=0700 owner="{{swift_oper_user}}"
 
 - name: make swiftops a nopasswd sudoer
   copy:
     dest: /etc/sudoers.d/swiftops
-    content: "{{oper_user}} ALL=(ALL:ALL) NOPASSWD:ALL\n"
+    content: "{{swift_oper_user}} ALL=(ALL:ALL) NOPASSWD:ALL\n"
     owner: root
     mode: 0440
 

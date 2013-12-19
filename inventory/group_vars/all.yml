@@ -3,9 +3,13 @@
 # Swift specific settings
 #
 
-oper_user: "swiftops"
+swift_oper_user: "swiftops"
 swift_hash_prefix: "SOMERANDOMSTRING"
-swift_install_keystone: true
+
+# for ring creation
+swift_part_power: 10
+swift_replicas: 3
+swift_min_part_hours: 1
 
 #
 # RAX provisioning data

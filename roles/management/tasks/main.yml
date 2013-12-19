@@ -3,20 +3,47 @@
   apt: pkg={{item}} state=present
   with_items:
     - swift-ring-master-server
+    - swift
     - dsh
 
 - name: generate dsh group directory
-  file: dest=/home/{{oper_user}}/.dsh/group owner="{{oper_user}}" mode=0700 state=directory
+  file: dest=/home/{{swift_oper_user}}/.dsh/group owner="{{swift_oper_user}}" mode=0700 state=directory
 
 - name: generate ssh key
-  command: ssh-keygen -t rsa -N '' -f /home/{{oper_user}}/.ssh/id_rsa creates=/home/{{oper_user}}/.ssh/id_rsa
+  command: ssh-keygen -t rsa -N '' -f /home/{{swift_oper_user}}/.ssh/id_rsa creates=/home/{{swift_oper_user}}/.ssh/id_rsa
 
 - name: set privkey perms
-  file: dest=/home/{{oper_user}}/.ssh/id_rsa mode=0600 owner="{{oper_user}}"
+  file: dest=/home/{{swift_oper_user}}/.ssh/id_rsa mode=0600 owner="{{swift_oper_user}}"
 
 - name: set pubkey perms
-  file: dest=/home/{{oper_user}}/.ssh/id_rsa.pub mode=0600 owner="{{oper_user}}"
+  file: dest=/home/{{swift_oper_user}}/.ssh/id_rsa.pub mode=0600 owner="{{swift_oper_user}}"
 
 - name: register ssh pubkey
-  command: cat /home/{{oper_user}}/.ssh/id_rsa.pub
+  command: cat /home/{{swift_oper_user}}/.ssh/id_rsa.pub
   register: cluster_ssh_pubkey
+
+- name: ensure builder files
+  command: swift-ring-builder {{item}}.builder create {{swift_part_power}} {{swift_replicas}} {{swift_min_part_hours}} chdir=/etc/swift creates=/etc/swift/{{item}}.builder
+  with_items:
+    - object
+    - container
+    - account
+
+- name: ensure ring builder permissions
+  file: path=/etc/swift/{{item}}.builder owner=swift mode=0644
+  with_items:
+    - object
+    - container
+    - account
+
+- name: ensure swift-ring-master config
+  template: dest=/etc/swift/ring-master.conf src=ring-master.conf.j2 owner=root mode=0644
+  notify:
+    - restart swift-ring-master
+    - restart swift-ring-master-wsgi
+
+- name: enable swift-ring-master
+  service: name=swift-ring-master enabled=yes state=started
+
+- name: enable swift-ring-master-wsgi
+  service: name=swift-ring-master-wsgi enabled=yes state=started

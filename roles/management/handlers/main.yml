@@ -1,0 +1,6 @@
+---
+- name: restart swift-ring-master
+  service: name=swift-ring-master state=restarted
+
+- name: restart swift-ring-master-wsgi
+  service: name=swift-ring-master-wsgi state=restarted

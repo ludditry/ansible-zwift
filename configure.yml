@@ -56,3 +56,9 @@
   hosts: proxy
   roles:
   - {role: proxy}
+
+# - name: Frob rings
+#   tags: rings
+#   hosts: proxy:storage
+#   roles:
+#     - {role: generate-rings, when: swift_generate_rings == true}
