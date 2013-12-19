@@ -46,7 +46,7 @@ use = egg:swift#bulk
 
 [filter:cache]
 memcache_serialization_support = 2
-memcache_servers = 192.168.122.12:11211
+memcache_servers = 127.0.0.1:11211
 use = egg:swift#memcache
 
 [filter:catch_errors]
@@ -93,5 +93,12 @@ use = egg:swift#staticweb
 [filter:tempurl]
 use = egg:swift#tempurl
 
+[filter:tempauth]
+use = egg:swift#tempauth
+user_admin_admin = admin .admin .reseller_admin
+user_test_tester = testing .admin
+user_test2_tester2 = testing2 .admin
+user_test_tester3 = testing3
+
 [pipeline:main]
-pipeline = catch_errors proxy-logging healthcheck cache ratelimit authtoken keystoneauth proxy-logging proxy-server
+pipeline = catch_errors proxy-logging healthcheck cache ratelimit tempauth proxy-logging proxy-server
