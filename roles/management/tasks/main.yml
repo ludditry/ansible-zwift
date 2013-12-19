@@ -1,0 +1,22 @@
+---
+- name: ensure management packages
+  apt: pkg={{item}} state=present
+  with_items:
+    - swift-ring-master-server
+    - dsh
+
+- name: generate dsh group directory
+  file: dest=/home/{{oper_user}}/.dsh/group owner="{{oper_user}}" mode=0700 state=directory
+
+- name: generate ssh key
+  command: ssh-keygen -t rsa -N '' -f /home/{{oper_user}}/.ssh/id_rsa creates=/home/{{oper_user}}/.ssh/id_rsa
+
+- name: set privkey perms
+  file: dest=/home/{{oper_user}}/.ssh/id_rsa mode=0600 owner="{{oper_user}}"
+
+- name: set pubkey perms
+  file: dest=/home/{{oper_user}}/.ssh/id_rsa.pub mode=0600 owner="{{oper_user}}"
+
+- name: register ssh pubkey
+  command: cat /home/{{oper_user}}/.ssh/id_rsa.pub
+  register: cluster_ssh_pubkey

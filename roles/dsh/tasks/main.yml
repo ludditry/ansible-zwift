@@ -1,0 +1,31 @@
+---
+# FIXME: need network lookup
+- name: add dsh entry
+  lineinfile:
+    create: yes
+    dest: /home/{{oper_user}}/.dsh/group/{{dsh_group}}
+    state: present
+    insertafter: EOF
+    line: "{{oper_user}}@{{ansible_eth2['ipv4']['address']}}"
+    owner: "{{oper_user}}"
+    mode: 0600
+  delegate_to: "{{dsh_server}}"
+
+- name: add to known_hosts
+  lineinfile:
+    create: yes
+    dest: /home/{{oper_user}}/.ssh/known_hosts
+    state: present
+    insertafter: EOF
+    line: "{{ansible_eth2['ipv4']['address']}} ssh-rsa {{ansible_ssh_host_key_rsa_public}}"
+    owner: "{{oper_user}}"
+    mode: 0600
+  delegate_to: "{{dsh_server}}"
+
+- name: add pubkey to authorized_hosts
+  lineinfile:
+    create: yes
+    dest: /home/{{oper_user}}/.ssh/authorized_keys
+    state: present
+    insertafter: EOF
+    line: "{{hostvars[dsh_server]['cluster_ssh_pubkey']['stdout']}}"

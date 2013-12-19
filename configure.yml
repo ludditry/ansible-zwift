@@ -17,7 +17,30 @@
   hosts: management
   roles:
   - {role: management}
-  - {role: keystone, when: "swift_install_keystone == true", tags: ['keystone']}
+
+- name: DSH Configuration (swift)
+  tags: management
+  hosts: all:!management
+  roles:
+  - role: dsh
+    dsh_server: "{{prefix}}-management"
+    dsh_group: swift
+
+- name: DSH Configuration (proxy)
+  tags: management
+  hosts: proxy
+  roles:
+  - role: dsh
+    dsh_server: "{{prefix}}-management"
+    dsh_group: proxy
+
+- name: DSH Configuration (storage)
+  tags: management
+  hosts: storage
+  roles:
+  - role: dsh
+    dsh_server: "{{prefix}}-management"
+    dsh_group: storage
 
 - name: Storage configuration
   tags: storage
