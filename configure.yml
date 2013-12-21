@@ -47,6 +47,7 @@
   hosts: storage
   roles:
   - {role: storage}
+  - {role: rings, ring_master: "{{prefix}}-management"}
   - {role: object, tags: ['object']}
   - {role: container, tags: ['container']}
   - {role: account, tags: ['account']}
@@ -56,9 +57,16 @@
   hosts: proxy
   roles:
   - {role: proxy}
+  - {role: rings, ring_master: "{{prefix}}-management"}
 
-# - name: Frob rings
-#   tags: rings
-#   hosts: proxy:storage
-#   roles:
-#     - {role: generate-rings, when: swift_generate_rings == true}
+- name: Build rings
+  tags: add-rings
+  hosts: storage
+  roles:
+    - {role: generate-rings, ring_master: "{{prefix}}-management", when: swift_generate_rings == true}
+
+- name: Pull rings
+  tags: rings
+  hosts: storage:proxy
+  roles:
+    - {role: pull-rings, ring_master: "{{prefix}}-management"}

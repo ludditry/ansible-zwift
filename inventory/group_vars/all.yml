@@ -9,6 +9,7 @@ prefix: c1
 swift_oper_user: "swiftops"
 swift_hash_prefix: "SOMERANDOMSTRING"
 swift_statsd_host: "{{prefix}}-management"
+swift_generate_rings: true
 
 # for ring creation
 swift_part_power: 10

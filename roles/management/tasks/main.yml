@@ -5,6 +5,7 @@
     - swift-ring-master-server
     - swift
     - dsh
+    - swiftscout
 
 - name: generate dsh group directory
   file: dest=/home/{{swift_oper_user}}/.dsh/group owner="{{swift_oper_user}}" mode=0700 state=directory

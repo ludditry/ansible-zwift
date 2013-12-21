@@ -1,0 +1,9 @@
+---
+- name: Install ring-minion client
+  apt: pkg=swift-ring-master-client state=installed
+
+- name: Set up ring-minion service
+  service: name=swift-ring-minion state=stopped enabled=no
+
+- name: Drop ring-minion config file
+  template: dest=/etc/swift/ring-minion.conf src=ring-minion.conf.j2 owner=swift mode=644
