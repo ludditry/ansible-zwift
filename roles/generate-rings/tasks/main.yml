@@ -1,12 +1,12 @@
 ---
 - name: Add object disks
-  command: drivescout -y -r {{ansible_eth2['ipv4']['address']}} -p 6000 --zone={{swift_zone}} -w 100 object.builder
+  command: drivescout -y -r {{ansible_eth2['ipv4']['address']}} -p 6000 --zone={{swift_zone}} -w 100 object.builder chdir=/etc/swift
   delegate_to: "{{ring_master}}"
 
 - name: Add container disks
-  command: drivescout -y -r {{ansible_eth2['ipv4']['address']}} -p 6001 --zone={{swift_zone}} -w 100 container.builder
+  command: drivescout -y -r {{ansible_eth2['ipv4']['address']}} -p 6001 --zone={{swift_zone}} -w 100 container.builder chdir=/etc/swift
   delegate_to: "{{ring_master}}"
 
 - name: Add account disks
-  command: drivescout -y -r {{ansible_eth2['ipv4']['address']}} -p 6002 --zone={{swift_zone}} -w 100 account.builder
+  command: drivescout -y -r {{ansible_eth2['ipv4']['address']}} -p 6002 --zone={{swift_zone}} -w 100 account.builder chdir=/etc/swift
   delegate_to: "{{ring_master}}"

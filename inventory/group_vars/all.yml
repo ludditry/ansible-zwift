@@ -36,7 +36,7 @@ rax_username: "{{lookup('env','OS_USERNAME')}}"
 rax_api_key: "{{lookup('env','OS_PASSWORD')}}"
 
 # The keypair must already exist
-rax_keypair: rpedde
+rax_keypair: "{{lookup('env', 'USER')}}"
 
 # -- Flavors --
 # RAM: 4096MB, Disk: 160GB, Ephemeral: 0, Swap: 2048MB, VCPUs: 2, RXTX Factor: 10.0
