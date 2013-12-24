@@ -5,7 +5,7 @@ This is a work in progress.
 Quick instructions: source a rax environment, then run the
 provision.yml playbook:
 
-    ansible-playbook provision.yml
+    ansible-playbook provision.yml -e rax_keypair=NameOfYourKeyPair
 
 if you want a cluster named something other than "c1", add the extra
 arg `prefix`:
