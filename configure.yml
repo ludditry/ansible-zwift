@@ -18,6 +18,8 @@
   roles:
   - {role: management}
 
+# FIXME(rp): these dsh configuration should probably
+# be done serial: 1 so as not to race
 - name: DSH Configuration (swift)
   tags: management
   hosts: all:!management
@@ -60,13 +62,53 @@
   - {role: rings, ring_master: "{{prefix}}-management"}
 
 - name: Build rings
-  tags: add-rings
+  tags: rings
   hosts: storage
   roles:
     - {role: generate-rings, ring_master: "{{prefix}}-management", when: swift_generate_rings == true}
+
+- name: Rebalance rings
+  tags: rings
+  hosts: management
+  roles:
+    - {role: rebalance-rings, ring: object}
+    - {role: rebalance-rings, ring: container}
+    - {role: rebalance-rings, ring: account}
 
 - name: Pull rings
   tags: rings
   hosts: storage:proxy
   roles:
     - {role: pull-rings, ring_master: "{{prefix}}-management"}
+
+# This is awkward... straddles the line between bootstrap and ongoing
+# config management
+- name: ensure storage services
+  tags: services
+  hosts: storage
+  tasks:
+    - name: ensure server services
+      service: name=swift-{{item}} enabled=yes state=started
+      with_items: [ "object", "container", "account" ]
+
+    - name: ensure replicator services
+      service: name=swift-{{item}}-replicator enabled=yes state=started
+      with_items: [ "object", "container", "account" ]
+
+    - name: ensure auditor services
+      service: name=swift-{{item}}-auditor enabled=yes state=started
+      with_items: [ "object", "container", "account" ]
+
+    - name: ensure updater services
+      service: name=swift-{{item}}-updater enabled=yes state=started
+      with_items: [ "object", "container" ]
+
+    - name: ensure account reaper
+      service: name=swift-account-reaper enabled=yes state=started
+
+- name: ensure proxy services
+  tags: services
+  hosts: proxy
+  tasks:
+    - name: ensure proxy service
+      service: name=swift-proxy enabled=yes state=started

@@ -37,6 +37,9 @@
     - container
     - account
 
+- name: ensure swift-ring-master log directory
+  file: path=/var/log/ring-master owner=swift mode=0755 state=directory
+
 - name: ensure swift-ring-master config
   template: dest=/etc/swift/ring-master.conf src=ring-master.conf.j2 owner=root mode=0644
   notify:

@@ -1,0 +1,14 @@
+---
+- name: ensure builder permissions
+  file: path=/etc/swift/{{ring}}.builder mode=0644 owner=swift
+
+# FIXME(rp): rebalance can't tell the difference between no partitions
+# changed and min_part hours need an upstream patch for this, with
+# different error codes
+
+- name: rebalance ring
+  command: swift-ring-builder {{ring}}.builder rebalance chdir=/etc/swift
+  ignore_errors: yes
+
+- name: ensure ring permissions
+  file: path=/etc/swift/{{ring}}.ring.gz mode=0644 owner=swift

@@ -1,0 +1,3 @@
+---
+- name: restart swift-account
+  service: name=swift-account state=restarted
