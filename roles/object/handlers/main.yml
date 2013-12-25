@@ -1,0 +1,3 @@
+---
+- name: restart swift-object
+  service: name=swift-object state=restarted
