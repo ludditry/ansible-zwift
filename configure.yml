@@ -70,3 +70,10 @@
   hosts: storage:proxy
   roles:
     - {role: pull-rings, ring_master: "{{prefix}}-management"}
+
+- name: Configure monitoring services
+  tags: management
+  hosts: management
+  roles:
+  - {role: statsd}
+  - {role: graphite}
