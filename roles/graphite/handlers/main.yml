@@ -1,0 +1,7 @@
+---
+- name: restart carbon-cache
+  service: name=carbon-cache state=restarted
+
+# possibly we should reload instead
+- name: restart apache2
+  service: name=apache2 state=restarted

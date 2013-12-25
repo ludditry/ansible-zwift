@@ -1,0 +1,7 @@
+---
+- name: Ensure statsd packages
+  apt: pkg=statsd-c state=present
+
+- name: drop statsd conf
+  template: dest=/etc/default/statsd src=statsd.j2 mode=0644
+  notify: restart statsd-c
