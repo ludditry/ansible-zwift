@@ -1,9 +1,9 @@
 ---
 - name: Ensure graphite packages
-  apt: pkg=statsd-c state=present
+  apt: pkg={{item}} state=present
   with_items:
     - apache2
-    - libapache2-mod_wsgi
+    - libapache2-mod-wsgi
     - graphite-carbon
     - graphite-web
 
@@ -19,14 +19,13 @@
   template: dest=/etc/apache2/sites-available/graphite src=graphite.j2
   notify: restart apache2
 
-- stat: path=/etc/apache2/sites-enabled/graphite
-  register: g
+- name: a2enmod wsgi
+  command: a2enmod wsgi creates=/etc/apache2/mods-enabled/wsgi.conf
+  notify: restart apache2
 
-# TODO (wilk): This notify is not working.
 - name: a2ensite graphite
-  shell: a2ensite graphite
-  when: g.stat is defined and not g.stat.exists
+  command: a2ensite graphite creates=/etc/apache2/sites-enabled/graphite
   notify: restart apache2
 
 - name: Upgrade graphite database versioning
-  shell: graphite-manage syncdb
+  shell: su -s /bin/bash _graphite -c "graphite-manage syncdb --noinput"
