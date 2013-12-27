@@ -1,7 +1,9 @@
 ---
 - name: Ensure statsd packages
+  tags: monitoring
   apt: pkg=statsd-c state=present
 
 - name: drop statsd conf
+  tags: monitoring
   template: dest=/etc/default/statsd src=statsd.j2 mode=0644
   notify: restart statsd-c
