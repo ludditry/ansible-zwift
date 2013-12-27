@@ -27,5 +27,9 @@
   command: a2ensite graphite creates=/etc/apache2/sites-enabled/graphite
   notify: restart apache2
 
+- name: a2dissite default
+  command: a2dissite default removes=/etc/apache2/sites-enabled/default
+  notify: restart apache2
+
 - name: Upgrade graphite database versioning
   shell: su -s /bin/bash _graphite -c "graphite-manage syncdb --noinput"
