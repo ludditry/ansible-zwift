@@ -7,6 +7,11 @@
     - collectd-core
     - collectd-utils
 
+- name: Ensure collectd graphite writer plugin
+  tags: monitoring
+  apt: pkg=collectd-write-graphite state=present
+  when: swift_collectd_server is defined and swift_collectd_server
+
 - name: Create /etc/collectd/conf.d
   tags: monitoring
   file: path=/etc/collectd/conf.d owner=root mode=0700 state=directory
@@ -42,3 +47,9 @@
   tags: monitoring
   template: dest=/etc/collectd/conf.d/network.conf src=network.conf.j2
   notify: restart collectd
+
+- name: Configure collectd graphite plugin
+  tags: monitoring
+  template: dest=/etc/collectd/conf.d/graphite.conf src=graphite.conf.j2
+  notify: restart collectd
+  when: swift_collectd_server is defined and swift_collectd_server

@@ -1,0 +1,14 @@
+LoadPlugin "write_graphite"
+<Plugin "write_graphite">
+ <Carbon>
+   Host "{{swift_carbon_host}}"
+   Port "2003"
+   #Prefix "collectd."
+   #Postfix ""
+   #Protocol "udp"
+   EscapeCharacter "_"
+   SeparateInstances true
+   StoreRates false
+   AlwaysAppendDS false
+ </Carbon>
+</Plugin>
