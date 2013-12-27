@@ -1,0 +1,44 @@
+---
+- name: Ensure collectd packages
+  apt: pkg={{item}} state=present
+  tags: monitoring
+  with_items:
+    - collectd
+    - collectd-core
+    - collectd-utils
+
+- name: Create /etc/collectd/conf.d
+  tags: monitoring
+  file: path=/etc/collectd/conf.d owner=root mode=0700 state=directory
+  
+- name: Configure collectd
+  tags: monitoring
+  template: dest=/etc/collectd/collectd.conf src=collectd.conf.j2
+  notify: restart collectd
+
+- name: Configure base monitoring
+  tags: monitoring
+  template: dest=/etc/collectd/conf.d/base_monitoring.conf src=base_monitoring.conf.j2
+  notify: restart collectd
+
+- name: Count available swap files/partitions
+  tags: monitoring
+  shell: cat /proc/swaps | wc -l
+  register: swaps
+
+- name: Enable swap monitoring
+  tags: monitoring
+  template: dest=/etc/collectd/conf.d/swap.conf src=swap.conf.j2
+  when: swaps.stdout|int > 1
+  notify: restart collectd
+
+- name: Disable swap monitoring (if swapless)
+  tags: monitoring
+  file: path=/etc/collectd/conf.d/swap.conf state=absent
+  when: swaps.stdout|int == 1
+  notify: restart collectd
+
+- name: Configure collectd network plugin
+  tags: monitoring
+  template: dest=/etc/collectd/conf.d/network.conf src=network.conf.j2
+  notify: restart collectd

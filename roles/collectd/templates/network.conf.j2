@@ -1,0 +1,19 @@
+{% if swift_collectd_host %}
+LoadPlugin network
+<Plugin network>
+       # client setup:
+       Server "{{swift_collectd_host}}" "25826"
+
+       # server setup:
+       {% if swift_collectd_server is defined and swift_collectd_server and swift_collectd_host_bind is defined %}
+       Listen "{{swift_collectd_host_bind}}" "25826"
+       TimeToLive 128
+       {% endif %}
+
+       # statistics about the network plugin itself
+       ReportStats false
+
+       # "garbage collection"
+       CacheFlush 1800
+</Plugin>
+{% endif %}
