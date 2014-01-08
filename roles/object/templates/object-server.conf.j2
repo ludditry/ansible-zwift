@@ -59,5 +59,12 @@ recon_cache_path = /var/cache/swift
 recon_enable = yes
 slowdown = 0.01
 
+[filter:object-query]
+use = egg:zerocloud#object_query
+zerovm_timeout = 360
+zerovm_maxpool = 10
+zerovm_maxinput = 5368709120
+zerovm_maxoutput = 5368709120
+
 [pipeline:main]
-pipeline = healthcheck recon object-server
+pipeline = healthcheck recon object-query object-server

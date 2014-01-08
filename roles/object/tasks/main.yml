@@ -1,6 +1,10 @@
 ---
 - name: Install packages
-  apt: pkg=swift-object
+  apt: pkg="{{item}}"
+  with_items:
+  - swift-object
+  - zerocloud
+  - zerovm-zmq
 
 - name: start object-server
   service: name=swift-object enabled=yes state=started
