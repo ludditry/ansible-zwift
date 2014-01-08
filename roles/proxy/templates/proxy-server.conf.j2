@@ -100,5 +100,10 @@ user_test_tester = testing .admin
 user_test2_tester2 = testing2 .admin
 user_test_tester3 = testing3
 
+[filter:proxy-query]
+use = egg:zerocloud#proxy_query
+zerovm_maxinput = 5368709120
+zerovm_maxoutput = 5368709120
+
 [pipeline:main]
-pipeline = catch_errors proxy-logging healthcheck cache ratelimit tempauth proxy-logging proxy-server
+pipeline = catch_errors proxy-logging healthcheck cache ratelimit tempauth proxy-logging proxy-query proxy-server

@@ -4,6 +4,8 @@
   with_items:
     - swift-proxy
     - memcached
+    - zerocloud
+    - zerovm-zmq
 
 - name: ensure extra proxy packages
   apt: pkg={{item}} state=present
