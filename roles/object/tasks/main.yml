@@ -6,9 +6,9 @@
   - zerocloud
   - zerovm-zmq
 
-- name: start object-server
-  service: name=swift-object enabled=yes state=started
-
 - name: drop object-server conf
   template: dest=/etc/swift/object-server.conf src=object-server.conf.j2 owner=swift mode=0644
   notify: restart swift-object
+
+- name: start object-server
+  service: name=swift-object enabled=yes state=started

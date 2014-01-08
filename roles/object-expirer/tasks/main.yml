@@ -1,0 +1,10 @@
+---
+- name: ensure object-expirer package
+  apt: pkg=swift-object-expirer
+
+- name: drop object-expirer conf
+  template: dest=/etc/swift/object-expirer.conf src=object-expirer.conf.j2 owner=swift mode=0644
+  notify: restart swift-object-expirer
+
+- name: start object-expirer
+  service: name=swift-object-expirer enabled=yes state=started

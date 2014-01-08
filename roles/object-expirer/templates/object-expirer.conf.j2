@@ -1,0 +1,29 @@
+[DEFAULT]
+# swift_dir = /etc/swift
+# user = swift
+# You can specify default log routing here if you want:
+log_name = object-expirer
+log_facility = LOG_LOCAL2
+log_level = INFO
+
+[object-expirer]
+# interval = 300
+
+[pipeline:main]
+pipeline = catch_errors cache proxy-logging proxy-server
+
+[app:proxy-server]
+use = egg:swift#proxy
+# See proxy-server.conf-sample for options
+node_timeout = 60
+conn_timeout = 2.5
+allow_account_management = false
+
+[filter:cache]
+use = egg:swift#memcache
+
+[filter:catch_errors]
+use = egg:swift#catch_errors
+
+[filter:proxy-logging]
+use = egg:swift#proxy_logging
