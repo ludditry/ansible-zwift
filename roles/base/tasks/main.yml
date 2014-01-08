@@ -60,3 +60,14 @@
     repo: "deb http://download.opensuse.org/repositories/home:/rpedde:/openstack/xUbuntu_12.04/ /"
     state: present
     update_cache: yes
+
+- name: add zerovm repo key
+  apt_key:
+    url: http://zvm.rackspace.com/v1/repo/ubuntu/zerovm.pkg.key
+    state: present
+
+- name: add zerovm repo
+  apt_repository:
+    repo: "deb [arch=amd64] http://zvm.rackspace.com/v1/repo/ubuntu precise main"
+    state: present
+    update_cache: yes
