@@ -1,0 +1,36 @@
+<VirtualHost *:80>
+  ServerAdmin webmaster@localhost
+  ProxyRequests Off
+  ProxyPreserveHost On
+  ProxyVia On
+  DocumentRoot /var/www
+
+  <Directory />
+    Options FollowSymLinks
+    AllowOverride None
+  </Directory>
+
+  <Directory /var/www>
+    Options Indexes FollowSymlinks Multiviews
+    AllowOverride None
+    Order allow,deny
+    allow from all
+  </Directory>
+
+  <Location /v1>
+    ProxyPass http://localhost:8080/v1
+    ProxyPassReverse http://localhost:8080/v1
+  </Location>
+
+  <Location /open>
+    ProxyPass http://localhost:8080/open
+    ProxyPassReverse http://localhost:8080/open
+  </Location>
+
+  ErrorLog ${APACHE_LOG_DIR}/error.log
+
+  LogLevel warn
+
+  CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+</VirtualHost>

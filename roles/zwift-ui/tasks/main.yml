@@ -1,0 +1,21 @@
+# This assumes proxy host
+---
+- name: install apache
+  apt: pkg={{item}} state=present
+  with_items:
+    - apache2
+
+- name: enable proxy
+  command: a2enmod proxy creates=/etc/apache2/mods-enabled/proxy.load
+  notify: restart apache
+
+- name: enable proxy_http
+  command: a2enmod proxy_http creates=/etc/apache2/mods-enabled/proxy_http.load
+  notify: restart apache
+
+- name: drop proxyized default
+  action: template src=apache-default.j2 dest=/etc/apache2/sites-available/default owner=root group=root mode=0644
+  notify: restart apache
+
+- name: ensure apache2
+  service: name=apache2 enabled=yes state=started
