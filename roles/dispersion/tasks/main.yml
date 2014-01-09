@@ -1,0 +1,8 @@
+---
+- name: drop dispersion report config
+  tags: monitoring
+  template: dest=/etc/swift/dispersion.conf src=dispersion.conf.j2 mode=0644 owner=swift group=swift
+
+- name: run swift-dispersion-populate
+  tags: monitoring
+  command: /usr/bin/swift-dispersion-populate
