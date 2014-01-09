@@ -20,15 +20,15 @@
   notify: kick udev
 
 - name: partition devices
-  shell: echo 'y' | parted /dev/{{item}} mklabel gpt mkpart xfs 1m 100%; mkfs.xfs -f -i size=512 -d su=64k,sw=1 /dev/{{item}}1
+  shell: echo 'y' | parted /dev/{{item}} mklabel gpt mkpart xfs 1m 100%; mkfs.xfs -f -i size=512 -d su=64k,sw=1 /dev/{{item}}1 creates=/dev/{{item}}1
   when: ansible_devices.{{item}}.partitions|length == 0
   with_items: swift_devices
 
 - name: ensure /srv/node
-  file: path=/srv/node owner=root group=root mode=755
+  file: path=/srv/node owner=root group=root mode=0755
 
 - name: ensure mountpoints
-  file: path=/srv/node/{{item}} owner=root group=root mode=755
+  file: path=/srv/node/{{item}}
   with_items: swift_devices
 
 - name: ensure mount
@@ -38,6 +38,10 @@
     opts: defaults,noatime,nodiratime,nobarrier,logbufs=8
     fstype: xfs
     state: mounted
+  with_items: swift_devices
+
+- name: ensure mount permissions
+  file: path=/srv/node/{{item}} owner=swift
   with_items: swift_devices
 
 - name: drop a proper defaults/rsyncd
