@@ -2,7 +2,7 @@
 LoadPlugin network
 <Plugin network>
        # client setup:
-       Server "{{swift_collectd_host}}" "25826"
+       Server {{ hostvars[swift_collectd_host]['ansible_eth2']['ipv4']['address']}} "25826"
 
        # server setup:
        {% if swift_collectd_server is defined and swift_collectd_server and swift_collectd_host_bind is defined %}

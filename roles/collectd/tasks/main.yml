@@ -15,7 +15,7 @@
 - name: Create /etc/collectd/conf.d
   tags: monitoring
   file: path=/etc/collectd/conf.d owner=root mode=0700 state=directory
-  
+
 - name: Configure collectd
   tags: monitoring
   template: dest=/etc/collectd/collectd.conf src=collectd.conf.j2
