@@ -68,6 +68,7 @@
 - name: Build rings
   tags: rings
   hosts: storage
+  serial: 1
   roles:
     - {role: generate-rings, ring_master: "{{prefix}}-management", when: swift_generate_rings == true}
 
