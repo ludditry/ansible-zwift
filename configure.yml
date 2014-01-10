@@ -117,3 +117,9 @@
   tasks:
     - name: ensure proxy service
       service: name=swift-proxy enabled=yes state=started
+
+- name: zwift configuration
+  tags: zwift
+  hosts: proxy
+  roles:
+  - {role: zwift-ui}
