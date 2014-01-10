@@ -17,6 +17,11 @@
     allow from all
   </Directory>
 
+  <Location /auth>
+    ProxyPass http://localhost:8080/auth
+    ProxyPassReverse http://localhost:8080/auth
+  </Location>
+
   <Location /v1>
     ProxyPass http://localhost:8080/v1
     ProxyPassReverse http://localhost:8080/v1
