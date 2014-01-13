@@ -21,6 +21,8 @@ swift_min_part_hours: 1
 # net definitions
 swift_nets:
   swift: 172.20.0.0/24
+  replication: 172.20.0.0/24
+  monitoring: 172.20.0.0/24
 
 #
 # RAX provisioning data
