@@ -200,11 +200,11 @@ def setup():
             credentials = os.path.expanduser(credentials)
             pyrax.set_credential_file(credentials)
         else:
-            sys.stderr.write('No value in environment variable %s and/or no '
+            sys.stderr.write('No value in environment variables and/or no '
                              'credentials file at %s\n'
-                             % (e.message, default_creds_file))
+                             % default_creds_file)
             sys.exit(1)
-    except Exception, e:
+    except Exception as e:
         sys.stderr.write("%s: %s\n" % (e, e.message))
         sys.exit(1)
 
