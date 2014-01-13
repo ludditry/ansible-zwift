@@ -1,4 +1,7 @@
 ---
+- name: gather facts
+  hosts: all
+
 - name: Base configs for all servers
   tags: base
   hosts: all
@@ -123,3 +126,15 @@
   hosts: proxy
   roles:
   - {role: zwift-ui}
+
+- name: postfix relay config
+  tags: mail
+  hosts: management
+  roles:
+  - {role: postfix, swift_relay_net: swift}
+
+- name: postfix configuration
+  tags: mail
+  hosts: proxy:storage
+  roles:
+  - {role: postfix, swift_relay_host: "{{prefix}}-management"}

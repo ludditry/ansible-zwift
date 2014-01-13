@@ -1,0 +1,13 @@
+---
+- name: install postfix packages
+  apt: pkg={{item}} state=present
+  with_items:
+  - postfix
+  - mailutils
+
+- name: drop postfix config
+  template: src=main.cf.j2 dest=/etc/postfix/main.cf
+  notify: restart postfix
+
+- name: ensure postfix running
+  service: name=postfix state=started enabled=yes
