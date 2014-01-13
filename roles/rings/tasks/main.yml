@@ -7,3 +7,10 @@
 
 - name: Drop ring-minion config file
   template: dest=/etc/swift/ring-minion.conf src=ring-minion.conf.j2 owner=swift mode=644
+
+- stat: path=/etc/cron.d/swift-ring-check
+  register: f
+
+- name: Set up ring-minion cron job
+  template: dest=/etc/cron.d/swift-ring-check src=swift-ring-check.j2
+  when: f.stat is defined and not f.stat.exists

@@ -1,0 +1,2 @@
+MAILTO=swiftops
+{{ range(24)|random }} */1 * * * swift /usr/bin/swift-ring-minion-server start -f -o | grep -v unchanged
