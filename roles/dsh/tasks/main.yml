@@ -6,7 +6,7 @@
     dest: /home/{{swift_oper_user}}/.dsh/group/{{dsh_group}}
     state: present
     insertafter: EOF
-    line: "{{swift_oper_user}}@{{ansible_eth2['ipv4']['address']}}"
+    line: "{{swift_oper_user}}@{{lookup('hostip', 'cidr={{swift_nets[\"management\"]}}')}}"
     owner: "{{swift_oper_user}}"
     mode: 0600
   delegate_to: "{{dsh_server}}"
@@ -18,7 +18,7 @@
     dest: /home/{{swift_oper_user}}/.ssh/known_hosts
     state: present
     insertafter: EOF
-    line: "{{ansible_eth2['ipv4']['address']}} ssh-rsa {{ansible_ssh_host_key_rsa_public}}"
+    line: "{{lookup('hostip', 'cidr={{swift_nets[\"management\"]}}')}} ssh-rsa {{ansible_ssh_host_key_rsa_public}}"
     owner: "{{swift_oper_user}}"
     mode: 0600
   delegate_to: "{{dsh_server}}"
