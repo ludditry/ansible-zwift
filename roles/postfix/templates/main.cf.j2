@@ -32,7 +32,7 @@ alias_maps = hash:/etc/aliases
 alias_database = hash:/etc/aliases
 mydestination = {{inventory_hostname}}, localhost.localdomain, , localhost
 {% if swift_relay_host is defined and swift_relay_host %}
-relayhost = {{hostvars[swift_relay_host]['ansible_eth2']['ipv4']['address']}}
+relayhost = {{lookup('hostip', 'host={{swift_relay_host}} cidr={{swift_nets["management"]}}')}}
 {% else %}
 relayhost =
 {% endif %}
