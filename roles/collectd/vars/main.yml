@@ -1,0 +1,4 @@
+---
+swift_collectd_host: "{{prefix}}-management"
+swift_collectd_net: "{{swift_nets['monitoring']}}"
+swift_collectd_ip: "{{lookup('hostip', 'host={{swift_collectd_host}} cidr={{swift_collectd_net}}')}}"
