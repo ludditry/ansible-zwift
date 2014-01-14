@@ -1,5 +1,4 @@
 ---
-# FIXME(rp): need network lookup
 - name: add dsh entry
   lineinfile:
     create: yes
@@ -11,7 +10,6 @@
     mode: 0600
   delegate_to: "{{dsh_server}}"
 
-# FIXME(rp): need network lookup
 - name: add to known_hosts
   lineinfile:
     create: yes
