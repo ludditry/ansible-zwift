@@ -25,8 +25,7 @@ log_facility = LOG_LOCAL2
 #check_interval = 30
 
 # url for the ring master server - don't forget the trailing slash
-# FIXME(rp): need network lookup
-ring_master = http://{{hostvars[ring_master]['ansible_eth2']['ipv4']['address']}}:8090/
+ring_master = http://{{lookup('hostip', 'host={{ring_master}} cidr={{swift_nets["swift"]}}')}}:8090/
 
 # timeout for the ring master server
 #ring_master_timeout = 30
