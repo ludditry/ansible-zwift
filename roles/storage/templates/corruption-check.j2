@@ -1,0 +1,5 @@
+# By default it will send mail to the swiftops alias below
+# which in turn redirects it to the proper location
+#MAILTO="swiftops"
+# m h  dom mon dow   user command
+*/5 * * * * root /usr/local/bin/xfs_corruption_check.sh

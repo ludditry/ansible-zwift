@@ -51,3 +51,9 @@
 - name: drop a proper rsyncd.conf
   template: dest=/etc/rsyncd.conf src=rsyncd.conf.j2 mode=0644
   notify: restart rsync
+
+- name: drop corruption check script
+  copy: src=xfs_corruption_check.sh dest=/usr/local/bin/xfs_corruption_check.sh mode=0755 owner=root group=root
+
+- name: drop xfs corruption check cron
+  template: dest=/etc/cron.d/corruption-check src=corruption-check.j2 mode=0644 owner=root
