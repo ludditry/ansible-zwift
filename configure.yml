@@ -51,6 +51,32 @@
     dsh_server: "{{prefix}}-management"
     dsh_group: storage
 
+# Apply sysctls
+- name: proxy sysctls
+  hosts: proxy
+  tags: sysctl
+  roles:
+  - role: sysctl
+    conf_file: 20-proxy.conf
+    sysctl_values:
+      net.ipv4.tcp_tw_recycle: 1
+      net.ipv4.tcp_tw_reuse: 1
+      net.ipv4.ip_local_port_range: 1024 61000
+      net.ipv4.tcp_syncookies: 0
+
+- name: storage sysctls
+  hosts: storage
+  tags: sysctl
+  roles:
+  - role: sysctl
+    conf_file: 30-storage.conf
+    sysctl_values:
+      net.ipv4.tcp_tw_recycle: 1
+      net.ipv4.tcp_tw_reuse: 1
+      net.ipv4.ip_local_port_range: 1024 61000
+      net.ipv4.tcp_syncookies: 0
+      vm.min_free_kbytes: "{{ 1048576 if ((ansible_memfree_mb * 1024)/2 > 1048576) else ((ansible_memfree_mb * 1024)/2)|int }}"
+
 - name: Storage configuration
   tags: storage
   hosts: storage

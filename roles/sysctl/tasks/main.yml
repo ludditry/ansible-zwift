@@ -1,0 +1,4 @@
+---
+- name: add sysctls
+  template: dest=/etc/sysctl.d/{{conf_file}} src=sysctl.conf.j2 owner=root mode=644
+  notify: apply sysctls

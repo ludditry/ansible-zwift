@@ -1,0 +1,6 @@
+# {{ansible_managed}}
+#
+
+{% for key in sysctl_values %}
+{{key}} = {{sysctl_values[key]}}
+{% endfor %}
