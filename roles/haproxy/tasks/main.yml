@@ -1,0 +1,18 @@
+---
+- name: install haproxy packages
+  apt: pkg={{item}}
+  with_items:
+  - haproxy
+
+- name: drop haproxy default file
+  template: src=haproxy.j2 dest=/etc/default/haproxy owner=root mode=0644
+
+- name: copy haproxy ssl cert
+  copy: src={{swift_haproxy_cert}} dest=/etc/haproxy/haproxy.pem owner=root mode=0600
+
+- name: drop haproxy config
+  template: src=haproxy.cfg.j2 dest=/etc/haproxy/haproxy.cfg owner=root mode=0644
+  notify: restart haproxy
+
+- name: ensure haproxy startup
+  service: name=haproxy state=started enabled=yes

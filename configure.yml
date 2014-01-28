@@ -177,3 +177,9 @@
   hosts: proxy:storage
   roles:
   - {role: postfix, swift_relay_host: "{{prefix}}-management"}
+
+- name: haproxy configuration
+  tags: lb
+  hosts: proxy
+  roles:
+  - {role: haproxy}

@@ -1,0 +1,7 @@
+---
+swift_syslog_host: "{{prefix}}-management"
+swift_syslog_net: "{{swift_nets['monitoring']}}"
+swift_syslog_ip: "{{lookup('hostip', 'host={{swift_syslog_host}} cidr={{swift_syslog_net}}')}}"
+swift_haproxy_cert: snakeoil.pem
+swift_haproxy_stats_port: 8000
+swift_haproxy_stats_ip: 127.0.0.1

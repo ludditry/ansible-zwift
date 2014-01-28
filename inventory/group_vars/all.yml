@@ -24,6 +24,8 @@ swift_nets:
   replication: 172.20.0.0/24
   monitoring: 172.20.0.0/24
   management: 172.20.0.0/24
+  proxy: 172.20.0.0/24
+
 
 #
 # RAX provisioning data
