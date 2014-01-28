@@ -1,0 +1,15 @@
+---
+- name: install rsyslog packages
+  apt: pkg={{item}} state=present
+  with_items:
+    - rsyslog
+
+- name: drop rsyslog config
+  template: src=60-swift.conf.j2 dest=/etc/rsyslog.d/60-swift.conf owner=root mode=644
+  notify: restart rsyslog
+
+- name: ensure rsyslog startup
+  service: name=rsyslog state=started enabled=yes
+
+- name: drop rsyslog logrotates
+  template: src=logrotate-swift.j2 dest=/etc/logrotate.d/swift owner=root mode=0644

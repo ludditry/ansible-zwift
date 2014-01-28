@@ -1,0 +1,4 @@
+---
+swift_syslog_host: "{{prefix}}-management"
+swift_syslog_net: "{{swift_nets['monitoring']}}"
+swift_syslog_ip: "{{lookup('hostip', 'host={{swift_syslog_host}} cidr={{swift_syslog_net}}')}}"

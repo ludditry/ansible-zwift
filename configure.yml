@@ -51,6 +51,19 @@
     dsh_server: "{{prefix}}-management"
     dsh_group: storage
 
+# Set up syslog
+- name: syslog server
+  hosts: management
+  tags: syslog
+  roles:
+  - {role: syslog, swift_syslog_role: server}
+
+- name: syslog clients
+  hosts: storage:proxy
+  tags: syslog
+  roles:
+  - {role: syslog, swift_syslog_host: "{{prefix}}-management"}
+
 # Apply sysctls
 - name: proxy sysctls
   hosts: proxy
