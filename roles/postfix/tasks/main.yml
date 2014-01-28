@@ -11,3 +11,11 @@
 
 - name: ensure postfix running
   service: name=postfix state=started enabled=yes
+
+- name: ensure swiftops alias
+  lineinfile:
+    dest: /etc/aliases
+    state: present
+    regexp: "^swiftops:.*$"
+    line: "swiftops: {{swift_swiftops_email}}"
+  notify: rebuild aliases
