@@ -1,0 +1,5 @@
+router ospf
+ redistribute connected
+ network {{ecmp_advertise_network}} area {{ecmp_area}}
+
+ip forwarding

@@ -1,0 +1,24 @@
+---
+- name: install ecmp pacakges
+  apt: pkg={{item}} state=present
+  with_items:
+  - ebtables
+  - quagga
+
+- name: drop quagga daemon config
+  template: src=daemons.j2 dest=/etc/quagga/daemons owner=quagga group=quagga mode=0640
+
+- name: drop quagga zebra config
+  template: src=zebra.conf.j2 dest=/etc/quagga/zebra.conf owner=quagga group=quagga mode=0640
+  notify: restart quagga
+
+- name: drop quagga ospfd config
+  template: src=ospfd.conf.j2 dest=/etc/quagga/ospfd.conf owner=quagga group=quagga mode=0640
+  trigger: restart quagga
+
+- name: ensure quagga running
+  service: name=quagga enabled=yes state=started
+
+- name: add ecmp ip
+  tempate: src=ecmpiface.j2 dest=/etc/network/if-up.d/ecmpiface owner=root mode=0755
+  notify: apply ecmp ip

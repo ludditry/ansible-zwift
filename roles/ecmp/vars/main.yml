@@ -1,0 +1,5 @@
+---
+ecmp_advertise_network: 127.0.0.0/8
+ecmp_advertise_interface: eth0
+ecmp_area: 0.0.0.0
+ecmp_ip: 127.0.0.2

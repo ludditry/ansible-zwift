@@ -1,0 +1,6 @@
+---
+- name: restart quagga
+  service: name=quagga state=restarted
+
+- name: apply ecmp ip
+  command: IFACE={{ecmp_advertise_interface}} /etc/network/if-up.d/ecmpiface

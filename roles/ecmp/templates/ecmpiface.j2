@@ -1,0 +1,7 @@
+#!/bin/sh
+
+[ "$IFACE" != "{{ecmp_advertise_interface}}" ] || exit 0
+
+ip addr add {{ecmp_ip}}/32 dev {{ecmp_advertise_interface}}
+ebtables -A OUTPUT -p arp --arp-opcode=2 --arp-ip-src={{ecmp_ip}} -j DROP
+route add {{ecmp_ip}}/32 dev {{ecmp_advertise_interface}}
