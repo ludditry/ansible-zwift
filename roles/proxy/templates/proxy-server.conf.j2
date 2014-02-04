@@ -100,10 +100,22 @@ user_test_tester = testing .admin
 user_test2_tester2 = testing2 .admin
 user_test_tester3 = testing3
 
+[filter:liteauth]
+use = egg:liteauth#liteauth
+google_client_id = {{google_auth_client_id}}
+google_client_secret = {{google_auth_client_secret}}
+service_domain = {{google_auth_domain}}
+google_scope = {{google_auth_profile}}
+whitelist_url = {{google_auth_whitelist_url}}
+
 [filter:proxy-query]
 use = egg:zerocloud#proxy_query
 zerovm_maxinput = 5368709120
 zerovm_maxoutput = 5368709120
 
 [pipeline:main]
+{% if swift_auth_type == 'tempauth' %}
 pipeline = catch_errors proxy-logging healthcheck cache ratelimit tempauth proxy-logging proxy-query proxy-server
+{% elif swift_auth_type == 'google' %}
+pipeline = catch_errors proxy-logging healthcheck cache ratelimit liteauth proxy-logging proxy-query proxy-server
+{% endif %}
