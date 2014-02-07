@@ -63,11 +63,11 @@
 
 - name: add zerovm repo key
   apt_key:
-    url: http://zvm.rackspace.com/v1/repo/ubuntu/zerovm.pkg.key
+    url: http://packages.zerovm.org/apt/ubuntu/zerovm.pkg.key
     state: present
 
 - name: add zerovm repo
   apt_repository:
-    repo: "deb [arch=amd64] http://zvm.rackspace.com/v1/repo/ubuntu precise main"
+    repo: "deb http://packages.zerovm.org/apt/ubuntu precise main"
     state: present
     update_cache: yes
