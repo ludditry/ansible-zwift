@@ -10,7 +10,7 @@ provision.yml playbook:
 if you want a cluster named something other than "c1", add the extra
 arg `prefix`:
 
-    ansible-playbook provision.yml -e c2
+    ansible-playbook provision.yml -e prefix=c2
 
 Once the cluster has clusterated, you can configure the cluster by
 running configure.yml. Limit the cluster to the cluster you created
