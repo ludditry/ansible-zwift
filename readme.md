@@ -2,7 +2,13 @@
 
 This is a work in progress.
 
-Quick instructions: source a rax environment, then run the
+## Requirements ##
+
+We require ansible1.4, pyrax, and python-ipaddr
+
+## Quick instructions ## 
+
+source a rax environment (novarc / openrc format), then run the
 provision.yml playbook:
 
     ansible-playbook provision.yml -e rax_keypair=NameOfYourKeyPair
