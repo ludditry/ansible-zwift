@@ -16,6 +16,6 @@ Once the cluster has clusterated, you can configure the cluster by
 running configure.yml. Limit the cluster to the cluster you created
 using -l:
 
-    ansible-playbook configure.yml -l c1
+    ansible-playbook configure.yml -l c1 -e prefix=c1
 
 There are tags and stuff you can use too.  Some variables as well.  Meh.
