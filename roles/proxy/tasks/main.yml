@@ -2,11 +2,14 @@
 - name: ensure proxy packages
   apt: pkg={{item}} state=present
   with_items:
-    - swift-proxy
     - memcached
-    - zerocloud
     - zerovm-zmq
-    - swift-middleware-liteauth
+
+- include: source-install.yml
+  when: swift_deployment_method|lower == "source"
+
+- include: package-install.yml
+  when: swift_deployment_method|lower == "package"
 
 - name: ensure extra proxy packages
   apt: pkg={{item}} state=present
@@ -14,5 +17,3 @@
 
 - name: drop a proper proxy-server.conf
   template: dest=/etc/swift/proxy-server.conf src=proxy-server.conf.j2 owner=swift group=swift mode=0644
-
-#101365010295482388031

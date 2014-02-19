@@ -2,10 +2,13 @@
 - name: ensure management packages
   apt: pkg={{item}} state=present
   with_items:
-    - swift-ring-master-server
-    - swift
     - dsh
-    - swiftscout
+
+- include: source-install.yml
+  when: swift_deployment_method|lower == "source"
+
+- include: package-install.yml
+  when: swift_deployment_method|lower == "package"
 
 - name: generate dsh group directory
   file: dest=/home/{{swift_oper_user}}/.dsh/group owner="{{swift_oper_user}}" mode=0700 state=directory

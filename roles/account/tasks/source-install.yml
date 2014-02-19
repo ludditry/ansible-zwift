@@ -1,0 +1,8 @@
+---
+- name: Drop swift-account init scripts
+  template: dest=/etc/init.d/swift-{{item}} src=swift-{{item}}.init.j2 owner=root group=root mode=0755
+  with_items:
+  - account
+  - account-auditor
+  - account-replicator
+  - account-reaper

@@ -1,0 +1,3 @@
+---
+- name: Install container (by package)
+  apt: pkg=swift-container

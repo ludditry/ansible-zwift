@@ -1,0 +1,28 @@
+#!/bin/bash
+# {{ansible_managed}}
+
+if [ "$(basename $0)" == "swift-busybox" ]; then
+    set -e
+
+    # rebuild symlinks
+    for target in {{swift_source_deploy_dir}}/current/bin/*; do
+        # we don't want easy_install, pip or python
+        if [ -e "${target}" ] && [ -x "${target}" ]; then
+            script=$(basename "${target}")
+            if [[ ! "${script}" =~ "^easy_install*$" ]] &&
+                [[ ! "${script}" =~ "^python*$" ]] &&
+                [[ ! "${script}" =~ "^pip*$" ]]; then
+
+                [ ! -e "/usr/bin/${script}" ] && ln -s /usr/bin/swift-busybox "/usr/bin/${script}"
+                if [ -x "${target}" ] && [[ $(file "${target}") =~ "script" ]]; then
+                    sed -i "${target}" -e '1s_^#!.*python.*_#!/usr/bin/env python_'
+                fi
+            fi
+        fi
+    done
+
+    exit 0
+fi
+
+source {{swift_source_deploy_dir}}/current/bin/activate
+{{swift_source_deploy_dir}}/current/bin/$(basename $0) "$@"
