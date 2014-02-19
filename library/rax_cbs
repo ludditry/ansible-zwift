@@ -221,11 +221,20 @@ def cloudblockstorage(module, state, cbs_name, cbs_type, cbs_size,
                 module.fail_json(msg='Error creating cbs device: %s' % e.message)
 
         if attach_to is not None:
-            try:
-                server = server_object_for_id(module, attach_to)
-                existing_volume.attach_to_instance(server, mountpoint=attach_as)
-            except Exception, e:
-                module.fail_json(msg='Error attaching CBS device: %s' % e.message)
+            # is the volume already attached?
+            if existing_volume.attachments:
+                existing_instance = server_object_for_id(module, attach_to)
+
+                if existing_volume.attachments[0]['server_id'] != existing_instance.id:
+                    module.fail_json(msg='Volume already attached to different instance: %s' %
+                                    existing_volume.attachments[0]['server_id'])
+
+            if not existing_volume.attachments:
+                try:
+                    server = server_object_for_id(module, attach_to)
+                    existing_volume.attach_to_instance(server, mountpoint=attach_as)
+                except Exception, e:
+                    module.fail_json(msg='Error attaching CBS device: %s' % e.message)
 
             if wait is True:
                 if not wait_for_attach(existing_volume, wait_timeout):
