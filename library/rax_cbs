@@ -166,7 +166,11 @@ def wait_for_spinup(cbs_object, wait_timeout):
 def wait_for_delete(cbs_object, wait_timeout):
     end_time = time.time() + wait_timeout
     while((wait_timeout == 0) or (time.time() < end_time)):
-        cbs_object.get()
+        try:
+            cbs_object.get()
+        except pyrax.exceptions.NotFound:
+            return True
+
         time.sleep(5)
 
     return False
