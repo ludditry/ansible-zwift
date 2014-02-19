@@ -1,0 +1,6 @@
+---
+zwift_ui_repo: "https://github.com/ludditry/zwift-ui.git"
+zwift_ui_version: "knowngood"
+zwift_ui_path: "/opt/zwift-ui"
+zwift_ui_docroot: "/opt/zwift-ui/swift\ authentication\ (under\ development)"
+zwift_apache_docroot: "/var/www/zwift-ui"

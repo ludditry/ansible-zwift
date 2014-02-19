@@ -3,14 +3,21 @@
   ProxyRequests Off
   ProxyPreserveHost On
   ProxyVia On
-  DocumentRoot /var/www
+  DocumentRoot "{{ zwift_ui_docroot }}"
 
   <Directory />
     Options FollowSymLinks
     AllowOverride None
   </Directory>
 
-  <Directory /var/www>
+  <Directory "{{ zwift_apache_docroot }}">
+    Options Indexes FollowSymlinks Multiviews
+    AllowOverride None
+    Order allow,deny
+    allow from all
+  </Directory>
+
+  <Directory "{{ zwift_ui_docroot }}">
     Options Indexes FollowSymlinks Multiviews
     AllowOverride None
     Order allow,deny

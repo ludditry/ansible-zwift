@@ -1,9 +1,18 @@
 # This assumes proxy host
 ---
-- name: install apache
+- name: install git and apache
   apt: pkg={{item}} state=present
   with_items:
     - apache2
+    - git
+
+- name: checkout zwift ui
+  git: repo={{ zwift_ui_repo }}
+       dest={{ zwift_ui_path }}
+       version={{ zwift_ui_version }}
+
+- name: symlink docroot
+  file: src="{{ zwift_ui_docroot }}" dest="{{ zwift_apache_docroot }}" state=link
 
 - name: enable proxy
   command: a2enmod proxy creates=/etc/apache2/mods-enabled/proxy.load
