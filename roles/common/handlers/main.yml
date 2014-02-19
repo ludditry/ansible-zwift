@@ -1,0 +1,6 @@
+---
+- name: relink busybox
+  command: /usr/bin/swift-busybox
+
+- name: fix venv permissions
+  command: chown -R root:root {{swift_source_deploy_dir}}/{{swift_source_deploy_version}}

@@ -14,3 +14,6 @@
 
 - name: Ensure cache directory
   file: path=/var/cache/swift owner=swift group=swift mode=755 state=directory
+
+- include: source-install.yml
+  when: swift_deployment_method|lower == "source"

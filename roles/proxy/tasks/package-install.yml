@@ -1,0 +1,6 @@
+- name: install swift proxy (package)
+  apt: pkg={{item}} state=present
+  with_items:
+    - swift-proxy
+    - zerocloud
+    - swift-middleware-liteauth

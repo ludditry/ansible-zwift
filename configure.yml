@@ -23,7 +23,7 @@
   - {role: management}
   - {role: statsd}
   - {role: graphite}
-  - {role: object-expirer}
+#  - {role: object-expirer}
 
 # FIXME(rp): these dsh configuration should probably
 # be done serial: 1 so as not to race

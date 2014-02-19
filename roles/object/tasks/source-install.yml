@@ -1,0 +1,8 @@
+---
+- name: Drop swift-object init scripts
+  template: dest=/etc/init.d/swift-{{item}} src=swift-{{item}}.init.j2 owner=root group=root mode=0755
+  with_items:
+  - object
+  - object-auditor
+  - object-replicator
+  - object-updater

@@ -12,11 +12,17 @@ swift_statsd_host: "{{prefix}}-management"
 swift_carbon_host: "{{prefix}}-management"
 swift_collectd_host: "{{prefix}}-management"
 swift_generate_rings: true
+swift_deployment_method: package
 
 # for ring creation
 swift_part_power: 10
 swift_replicas: 3
 swift_min_part_hours: 1
+
+# for source based deployments
+swift_source_deploy_dir: /opt/swift
+swift_source_deploy_site: "http://zwift-ci.zerovm.org"
+swift_source_deploy_version: "swift-00006"
 
 # net definitions
 swift_nets:

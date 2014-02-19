@@ -1,0 +1,7 @@
+---
+- name: ensure management packages
+  apt: pkg={{item}} state=present
+  with_items:
+    - swift-ring-master-server
+    - swift
+    - swiftscout

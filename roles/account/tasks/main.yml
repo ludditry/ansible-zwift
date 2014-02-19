@@ -1,6 +1,9 @@
 ---
-- name: Install packages
-  apt: pkg=swift-account
+- include: source-install.yml
+  when: swift_deployment_method|lower == "source"
+
+- include: package-install.yml
+  when: swift_deployment_method|lower == "package"
 
 - name: start account-server
   service: name=swift-account enabled=yes state=started
