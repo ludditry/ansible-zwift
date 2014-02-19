@@ -1,6 +1,9 @@
 ---
-- name: Install ring-minion client
-  apt: pkg=swift-ring-master-client state=installed
+- include: source-install.yml
+  when: swift_deployment_method|lower == "source"
+
+- include: package-install.yml
+  when: swift_deployment_method|lower == "package"
 
 - name: Set up ring-minion service
   service: name=swift-ring-minion state=stopped enabled=no

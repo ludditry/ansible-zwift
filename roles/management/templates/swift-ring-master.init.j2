@@ -1,0 +1,49 @@
+#! /bin/sh
+# /etc/init.d/swift-ring-master
+
+### BEGIN INIT INFO
+# Provides:          swift-ring-master
+# Required-Start:    $local_fs $remote_fs $network $syslog
+# Required-Stop:     $local_fs $remote_fs $network $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: starts the swift-ring-master server
+# Description:       starts the swift-ring-master server using start-stop-daemon
+### END INIT INFO
+
+source {{swift_source_deploy_dir}}/current/bin/activate
+
+CONF="/etc/swift/ring-master.conf"
+DIRNAME=$(dirname `which swift-ring-master-server`)
+
+# Carry out specific functions when asked to by the system
+case "$1" in
+    start)
+        echo "Starting swift-ring-master"
+        $DIRNAME/swift-ring-master-server start --conf=$CONF
+        ;;
+    stop)
+        echo "Stopping swift-ring-master"
+        $DIRNAME/swift-ring-master-server stop --conf=$CONF
+        ;;
+    restart)
+        echo "Restarting swift-ring-master"
+        $DIRNAME/swift-ring-master-server stop --conf=$CONF
+        sleep 1
+        $DIRNAME/swift-ring-master-server start --conf=$CONF
+        ;;
+    pause)
+        echo "Pausing swift-ring-master"
+        $DIRNAME/swift-ring-master-server pause --conf=$CONF
+        ;;
+    unpause)
+        echo "Unpausing swift-ring-master"
+        $DIRNAME/swift-ring-master-server unpause --conf=$CONF
+        ;;
+    *)
+        echo "Usage: /etc/init.d/swift-ring-master {start|stop|restart|pause|unpause}"
+        exit 1
+        ;;
+esac
+
+exit 0

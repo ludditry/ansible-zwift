@@ -1,0 +1,6 @@
+---
+- name: Install swift-object-server (from package)
+  apt: pkg={{item}}
+  with_items:
+  - swift-object
+  - zerocloud

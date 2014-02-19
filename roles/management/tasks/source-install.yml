@@ -1,0 +1,6 @@
+---
+- name: drop swift-ring-master-server init scripts
+  template: dest=/etc/init.d/{{item}} src={{item}}.init.j2 owner=root group=root mode=0755
+  with_items:
+  - swift-ring-master
+  - swift-ring-master-wsgi

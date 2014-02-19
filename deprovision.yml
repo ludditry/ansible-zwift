@@ -28,7 +28,7 @@
       region: "{{rax_region}}"
       username: "{{rax_username}}"
       api_key: "{{rax_api_key}}"
-      cbs_name: "{{prefix}}-{{inventory_hostname}}"
+      cbs_name: "{{inventory_hostname}}"
       cbs_size: 100
       cbs_type: SATA
       wait: yes

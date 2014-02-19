@@ -1,0 +1,3 @@
+---
+- name: Install ring-minion client (package)
+  apt: pkg=swift-ring-master-client state=installed

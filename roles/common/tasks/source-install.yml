@@ -1,0 +1,30 @@
+---
+- name: ensure venv prereqs
+  apt: pkg={{item}} state=present
+  with_items:
+  - libssl1.0.0
+  - libffi6
+  - python-pip
+  - python-virtualenv
+
+- name: drop a swift-busybox
+  template: dest=/usr/bin/swift-busybox src=swift-busybox.j2 owner=root group=root mode=0755
+
+- name: create swift tarball dir
+  file: dest={{swift_source_deploy_dir}} owner=swift group=swift mode=0755 state=directory
+
+- name: install swift versioned tarball
+  shell: curl -skS {{swift_source_deploy_site}}/{{swift_source_deploy_version}}.tar.gz | tar -C {{swift_source_deploy_dir}} -xvzf - creates={{swift_source_deploy_dir}}/{{swift_source_deploy_version}}
+
+- name: drop a symlink
+  file: dest={{swift_source_deploy_dir}}/current src={{swift_source_deploy_dir}}/{{swift_source_deploy_version}} state=link
+  notify:
+  - relink busybox
+  - fix venv permissions
+
+- name: fix the venv path
+  lineinfile:
+    dest: "{{swift_source_deploy_dir}}/{{swift_source_deploy_version}}/bin/activate"
+    regexp: "^VIRTUAL_ENV=.*"
+    line: 'VIRTUAL_ENV="{{swift_source_deploy_dir}}/{{swift_source_deploy_version}}"'
+    state: present

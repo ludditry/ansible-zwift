@@ -1,0 +1,3 @@
+---
+- name: Drop swift-ring-minion init script
+  template: dest=/etc/init.d/swift-ring-minion src=swift-ring-minion.init.j2 owner=root group=root mode=0755
