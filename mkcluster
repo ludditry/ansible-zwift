@@ -1,0 +1,7 @@
+#!/bin/bash
+
+set -e
+set -u
+
+CLUSTER=${1:-c1}
+ansible-playbook provision.yml -e prefix=${CLUSTER}

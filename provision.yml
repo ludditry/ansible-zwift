@@ -32,14 +32,14 @@
       flavor: "{{rax_prov_flavor}}"
       image: "{{rax_prov_image}}"
       disk_config: "{{rax_diskconfig}}"
-      meta: { ansible_groups: "{{prefix}},zone-{{swift_zone}},{{swift_role}}" }
+      meta: { ansible_groups: "{{rax_groups}}" }
       wait: yes
       state: present
     register: rax
 
 - name: Provision Disks
   tags: provision-disks
-  hosts: prov-template:&storage
+  hosts: prov-template:&prov-storage
   gather_facts: false
   tasks:
   - name: Provision disks

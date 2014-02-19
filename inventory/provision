@@ -1,28 +1,15 @@
-[proxy]
-proxy
-
-[zone-1]
-storage-z1
-
-[zone-2]
-storage-z2
-
-[zone-3]
-storage-z3
-
-[management]
-management
-
-[storage:children]
-zone-1
-zone-2
-zone-3
-
 [prov-template:children]
-storage
-proxy
-management
+prov-non-storage
+prov-storage
+
+[prov-non-storage]
+proxy       rax_groups="{{prefix}},proxy"
+management  rax_groups="{{prefix}},management"
+
+[prov-storage]
+storage-z1  rax_groups="{{prefix}},zone-1,storage"
+storage-z2  rax_groups="{{prefix}},zone-2,storage"
+storage-z3  rax_groups="{{prefix}},zone-3,storage"
 
 [local]
-localhost ansible_connection=local ansible_python_interpreter=~/bin/Pythonic
-
+localhost ansible_connection=local
