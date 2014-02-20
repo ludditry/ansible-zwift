@@ -65,7 +65,7 @@ rax_keypair: "{{lookup('env', 'USER')}}"
 #rax_prov_flavor: 5
 
 # RAM: 4096MB, Disk: 40GB (SSD), Ephemeral: 40GB, Swap: 0, VCPUS: 4, RXTX Factor: 800.0
-rax_prov_flavor: performance1-1
+rax_prov_flavor: performance1-2
 
 #rax_prov_flavor: 2
 
