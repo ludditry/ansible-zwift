@@ -24,6 +24,11 @@ swift_source_deploy_dir: /opt/swift
 swift_source_deploy_site: "http://zwift-ci.zerovm.org"
 swift_source_deploy_version: "swift-00006"
 
+# base repos
+swift_base_repos:
+  "http://mirrors.kernel.org/ubuntu precise": ["main", "restricted", "universe"]
+  "http://mirrors.kernel.org/ubuntu precise-security": ["main", "restricted", "universe"]
+
 # net definitions
 swift_nets:
   swift: 172.20.0.0/24
