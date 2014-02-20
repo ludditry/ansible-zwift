@@ -100,11 +100,13 @@
   - {role: container, tags: ['container']}
   - {role: account, tags: ['account']}
 
+# we're going to allow account management here until we have a config
+# for interal management proxy that we can swauth-init on
 - name: Proxy configuration
   tags: proxy
   hosts: proxy
   roles:
-  - {role: proxy}
+  - {role: proxy, swift_allow_account_management: "true"}
   - {role: rings, ring_master: "{{prefix}}-management"}
 
 - name: Build rings
