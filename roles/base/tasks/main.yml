@@ -18,6 +18,9 @@
     state: present
   with_fileglob: id_*pub
 
+- name: Set up base package repos
+  template: dest=/etc/apt/sources.list src=sources.list.j2 owner=root group=root mode=0644
+
 - name: Update packages
   tags: packages
   apt: update_cache=yes upgrade=dist

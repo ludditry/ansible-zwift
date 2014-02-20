@@ -1,0 +1,7 @@
+#
+# {{ansible_managed}}
+#
+
+{% for repo in swift_base_repos %}
+deb {{repo}} {{swift_base_repos[repo]|join(' ')}}
+{% endfor %}
