@@ -1,0 +1,13 @@
+# One time cluster setup items - should do dispersion population here, too
+---
+- name: one-time setup
+  hosts: proxy
+  tasks:
+  - name: initialize swauth
+    shell: swauth-prep -K {{swift_swauth_key}} && touch /etc/swift/swauth.prepped creates=/etc/swfit/swauth.prepped
+    when: swift_auth_type == 'swauth'
+    notify: create admin user
+
+  handlers:
+  - name: create admin user
+    shell: swauth-add-user -A http://127.0.0.1:8080/auth/ -K {{swift_swauth_key}} -a admin admin admin

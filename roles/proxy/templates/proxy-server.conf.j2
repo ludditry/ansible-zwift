@@ -15,7 +15,7 @@ workers = 12
 
 [app:proxy-server]
 account_autocreate = true
-allow_account_management = false
+allow_account_management = {{swift_allow_account_management}}
 client_timeout = 60
 conn_timeout = 3.5
 error_suppression_interval = 60
@@ -108,6 +108,50 @@ service_domain = {{google_auth_domain}}
 google_scope = {{google_auth_profile}}
 whitelist_url = {{google_auth_whitelist_url}}
 
+[filter:swauth]
+use = egg:swauth#swauth
+# The reseller prefix will verify a token begins with this prefix before even
+# attempting to validate it. Also, with authorization, only Swift storage
+# accounts with this prefix will be authorized by this middleware. Useful if
+# multiple auth systems are in use for one Swift cluster.
+#   reseller_prefix = AUTH
+# If you wish to use a Swauth service on a remote cluster with this cluster:
+#   swauth_remote = http://remotehost:port/auth
+#   swauth_remote_timeout = 10
+# When using swauth_remote, the rest of these settings have no effect.
+#
+# The auth prefix will cause requests beginning with this prefix to be routed
+# to the auth subsystem, for granting tokens, creating accounts, users, etc.
+#   auth_prefix = /auth/
+# Cluster strings are of the format name#url where name is a short name for the
+# Swift cluster and url is the url to the proxy server(s) for the cluster.
+#   default_swift_cluster = local#http://127.0.0.1:8080/v1
+# You may also use the format name#url#url where the first url is the one
+# given to users to access their account (public url) and the second is the one
+# used by swauth itself to create and delete accounts (private url). This is
+# useful when a load balancer url should be used by users, but swauth itself is
+# behind the load balancer. Example:
+#   default_swift_cluster = local#https://public.com:8080/v1#http://private.com:8080/v1
+# Number of seconds a newly issued token should be valid for, by default.
+#   token_life = 86400
+# Maximum number of seconds a newly issued token can be valid for.
+#   max_token_life = <same as token_life>
+# Specifies how the user key is stored. The default is 'plaintext', leaving the
+# key unsecured but available for key-signing features if such are ever added.
+# An alternative is 'sha1' which stores only a one-way hash of the key leaving
+# it secure but unavailable for key-signing.
+#   auth_type = plaintext
+# Used if the auth_type is sha1 or another method that can make use of a salt.
+#   auth_type_salt = swauthsalt
+# This allows middleware higher in the WSGI pipeline to override auth
+# processing, useful for middleware such as tempurl and formpost. If you know
+# you're not going to use such middleware and you want a bit of extra security,
+# you can set this to false.
+#   allow_overrides = true
+# Highly recommended to change this. If you comment this out, the Swauth
+# administration features will be disabled for this proxy.
+super_admin_key = {{swift_swauth_key}}
+
 [filter:proxy-query]
 use = egg:zerocloud#proxy_query
 zerovm_maxinput = 5368709120
@@ -118,4 +162,6 @@ zerovm_maxoutput = 5368709120
 pipeline = catch_errors proxy-logging healthcheck cache ratelimit tempauth proxy-logging proxy-query proxy-server
 {% elif swift_auth_type == 'google' %}
 pipeline = catch_errors proxy-logging healthcheck cache ratelimit liteauth proxy-logging proxy-query proxy-server
+{% elif swift_auth_type == 'swauth' %}
+pipeline = catch_errors proxy-logging healthcheck cache ratelimit swauth proxy-logging proxy-query proxy-server
 {% endif %}
