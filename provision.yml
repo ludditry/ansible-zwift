@@ -39,7 +39,7 @@
 
 - name: Provision Disks
   tags: provision-disks
-  hosts: "{{previx}}-storage"
+  hosts: "{{profile}}-storage"
   gather_facts: false
   tasks:
   - name: Provision disks
