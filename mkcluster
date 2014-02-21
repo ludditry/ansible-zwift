@@ -20,8 +20,9 @@ function usage() {
 
 CLUSTER=c1
 EXTRA_ARGS=""
+PROFILE=simple
 
-while getopts "hc:e:" OPTION; do
+while getopts "hc:e:p:" OPTION; do
     case ${OPTION} in
         h)
             usage
@@ -36,6 +37,10 @@ while getopts "hc:e:" OPTION; do
             EXTRA_ARGS="${EXTRA_ARGS} -e ${OPTARG}"
             ;;
 
+        p)
+            PROFILE=${OPTARG}
+            ;;
+
         *)
             usage
             exit 1
@@ -43,4 +48,4 @@ while getopts "hc:e:" OPTION; do
     esac
 done
 
-ansible-playbook provision.yml -e prefix=${CLUSTER} ${EXTRA_ARGS}
+ansible-playbook provision.yml -e prefix=${CLUSTER} -e profile=${PROFILE} ${EXTRA_ARGS}

@@ -37,7 +37,7 @@
 
 - name: DSH Configuration (proxy)
   tags: management
-  hosts: proxy
+  hosts: proxy:auth-proxy
   roles:
   - role: dsh
     dsh_server: "{{prefix}}-management"
@@ -59,14 +59,14 @@
   - {role: syslog, swift_syslog_role: server}
 
 - name: syslog clients
-  hosts: storage:proxy
+  hosts: storage:proxy:auth-proxy
   tags: syslog
   roles:
   - {role: syslog, swift_syslog_host: "{{prefix}}-management"}
 
 # Apply sysctls
 - name: proxy sysctls
-  hosts: proxy
+  hosts: proxy:auth-proxy
   tags: sysctl
   roles:
   - role: sysctl
@@ -104,7 +104,7 @@
 # for interal management proxy that we can swauth-init on
 - name: Proxy configuration
   tags: proxy
-  hosts: proxy
+  hosts: proxy:auth-proxy
   roles:
   - {role: proxy, swift_allow_account_management: "true"}
   - {role: rings, ring_master: "{{prefix}}-management"}
@@ -157,14 +157,14 @@
 
 - name: ensure proxy services
   tags: services
-  hosts: proxy
+  hosts: proxy:auth-proxy
   tasks:
     - name: ensure proxy service
       service: name=swift-proxy enabled=yes state=started
 
 - name: zwift configuration
   tags: zwift
-  hosts: proxy
+  hosts: proxy:auth-proxy
   roles:
   - {role: zwift-ui}
 
@@ -176,7 +176,7 @@
 
 - name: postfix configuration
   tags: mail
-  hosts: proxy:storage
+  hosts: proxy:storage:auth-proxy
   roles:
   - {role: postfix, swift_relay_host: "{{prefix}}-management"}
 

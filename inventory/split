@@ -1,12 +1,17 @@
-[prov-template:children]
-prov-non-storage
-prov-storage
+# Split auth:
+#
+# Auth servers using oauth, with swauth as front-end
+#
+[split-template:children]
+split-non-storage
+split-storage
 
-[prov-non-storage]
+[split-non-storage]
 proxy       rax_groups="{{prefix}},proxy"
 management  rax_groups="{{prefix}},management"
+auth-proxy  rax_groups="{{prefix}},auth-proxy"
 
-[prov-storage]
+[split-storage]
 storage-z1  rax_groups="{{prefix}},zone-1,storage"
 storage-z2  rax_groups="{{prefix}},zone-2,storage"
 storage-z3  rax_groups="{{prefix}},zone-3,storage"
