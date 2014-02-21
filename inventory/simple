@@ -1,0 +1,15 @@
+[simple-template:children]
+simple-non-storage
+simple-storage
+
+[simple-non-storage]
+proxy       rax_groups="{{prefix}},proxy"
+management  rax_groups="{{prefix}},management"
+
+[simple-storage]
+storage-z1  rax_groups="{{prefix}},zone-1,storage"
+storage-z2  rax_groups="{{prefix}},zone-2,storage"
+storage-z3  rax_groups="{{prefix}},zone-3,storage"
+
+[local]
+localhost ansible_connection=local

@@ -16,7 +16,7 @@
 
 - name: Provision Hosts
   tags: provision-hosts
-  hosts: prov-template
+  hosts: "{{profile}}-template"
   gather_facts: false
   tasks:
   - name: Provision hosts
@@ -39,7 +39,7 @@
 
 - name: Provision Disks
   tags: provision-disks
-  hosts: prov-template:&prov-storage
+  hosts: "{{profile}}-prov-storage"
   gather_facts: false
   tasks:
   - name: Provision disks
