@@ -11,7 +11,7 @@ function usage() {
     echo " -h               what you are reading now"
     echo " -c cluster_name  make a cluster with this prefix"
     echo " -e extra_vars    set extra vars (passed to ansible as -e)"
-    echo
+    echo " -p profile       specify the provisioning profile to use (ex: simple, split)"
     echo "some useful extra_vars might be:"
     echo " -e swift_deployment_method=package - don't deploy from source"
     echo " -e rax_keypair=something - use YOUR keypair name, not mine"
@@ -21,7 +21,7 @@ function usage() {
 CLUSTER=c1
 EXTRA_ARGS=""
 PROFILE=simple
-
+OPTERR=1
 while getopts "hc:e:p:" OPTION; do
     case ${OPTION} in
         h)
@@ -41,7 +41,7 @@ while getopts "hc:e:p:" OPTION; do
             PROFILE=${OPTARG}
             ;;
 
-        *)
+        ?)
             usage
             exit 1
             ;;
