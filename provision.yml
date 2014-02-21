@@ -39,7 +39,7 @@
 
 - name: Provision Disks
   tags: provision-disks
-  hosts: "{{profile}}-prov-storage"
+  hosts: "{{profile}}-template:&storage"
   gather_facts: false
   tasks:
   - name: Provision disks
