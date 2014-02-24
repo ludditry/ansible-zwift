@@ -11,25 +11,35 @@
 # Description:       starts the swift-ring-master-wsgi server using start-stop-daemon
 ### END INIT INFO
 
-source {{swift_source_deploy_dir}}/current/bin/activate
+. {{swift_source_deploy_dir}}/current/bin/activate
 
+PIDFILE=/var/run/swift-ring-master-wsgi.pi
 CONF="/etc/swift/ring-master.conf"
-DIRNAME=$(dirname `which swift-ring-master-wsgi-server`)
+
+maybekillpidfile () {
+    if [ -e "${PIDFILE}" ]; then
+        pid=$(cat "${PIDFILE}")
+        if (! kill -0 ${pid} > /dev/null 2>&1 ); then
+            rm -f "${PIDFILE}"
+        fi
+    fi
+}
 
 # Carry out specific functions when asked to by the system
 case "$1" in
     start)
+        maybekillpidfile
         echo "Starting swift-ring-master-wsgi"
-        $DIRNAME/swift-ring-master-wsgi-server start --conf=$CONF
+        swift-ring-master-wsgi-server start --conf=$CONF
         ;;
     stop)
         echo "Stopping swift-ring-master-wsgi"
-        $DIRNAME/swift-ring-master-wsgi-server stop --conf=$CONF
+        swift-ring-master-wsgi-server stop --conf=$CONF
         ;;
     restart)
         echo "Restarting swift-ring-master-wsgi"
-        $DIRNAME/swift-ring-master-wsgi-server stop --conf=$CONF
-        $DIRNAME/swift-ring-master-wsgi-server start --conf=$CONF
+        swift-ring-master-wsgi-server stop --conf=$CONF
+        swift-ring-master-wsgi-server start --conf=$CONF
         ;;
     *)
         echo "Usage: /etc/init.d/swift-ring-master-wsgi {start|stop|restart}"
