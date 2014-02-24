@@ -4,7 +4,7 @@
   hosts: proxy
   tasks:
   - name: initialize swauth
-    shell: swauth-prep -K {{swift_swauth_key}} && touch /etc/swift/swauth.prepped creates=/etc/swfit/swauth.prepped
+    shell: swauth-prep -K {{swift_swauth_key}} && touch /etc/swift/swauth.prepped creates=/etc/swift/swauth.prepped
     when: swift_auth_type == 'swauth'
     notify: create admin user
 
