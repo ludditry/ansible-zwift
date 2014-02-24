@@ -6,8 +6,9 @@
   - name: initialize swauth
     shell: swauth-prep -K {{swift_swauth_key}} && touch /etc/swift/swauth.prepped creates=/etc/swift/swauth.prepped
     when: swift_auth_type == 'swauth'
-    notify: create admin user
+    notify: create swauth users
 
   handlers:
-  - name: create admin user
-    shell: swauth-add-user -A http://127.0.0.1:8080/auth/ -K {{swift_swauth_key}} -a admin admin admin
+  - name: create swauth users
+    shell: swauth-add-user -A http://127.0.0.1:8080/auth/ -K {{swift_swauth_key}} {{" -a " if item.admin else "" }} {{" -r " if item.reseller_admin else ""}} {{item.account}} {{item.user}} {{item.password}}
+    with_items: swift_users

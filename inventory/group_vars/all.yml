@@ -94,3 +94,24 @@ rax_net_labels:
 swift_swauth_public_endpoint: "https://{{ansible_eth0['ipv4']['address']}}"
 swift_swauth_private_endpoint: "https://127.0.0.1:8080"
 swift_swauth_default_cluster:  "local#{{swift_swauth_public_endpoint}}#{{swift_swauth_private_endpoint}}"
+swift_users:
+- "user": "admin"
+  "account": "admin"
+  "password": "admin"
+  "admin": true
+  "reseller_admin": true
+- "user": "tester"
+  "account": "test"
+  "password": "testing"
+  "admin": false
+  "reseller_admin": false
+- "user": "tester2"
+  "account": "test2"
+  "password": "testing2"
+  "admin": true
+  "reseller_admin": false
+- "user": "tester3"
+  "account": "test"
+  "password": "testing3"
+  "admin": false
+  "reseller_admin": false
