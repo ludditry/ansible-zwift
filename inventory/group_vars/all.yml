@@ -89,3 +89,8 @@ rax_net_labels:
 - private
 # CS/pyrax seems to add isolated networks in reverse order, so you're welcome
 - "{{ prefix }}-swift"
+
+# These should be overriden to loadbalanced vips for production clusters.
+swift_swauth_public_endpoint: "https://{{ansible_eth0['ipv4']['address']}}"
+swift_swauth_private_endpoint: "https://127.0.0.1:8080"
+swift_swauth_default_cluster:  "local#{{swift_swauth_public_endpoint}}#{{swift_swauth_private_endpoint}}"

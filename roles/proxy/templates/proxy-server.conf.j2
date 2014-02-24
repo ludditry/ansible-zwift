@@ -151,6 +151,7 @@ use = egg:swauth#swauth
 # Highly recommended to change this. If you comment this out, the Swauth
 # administration features will be disabled for this proxy.
 super_admin_key = {{swift_swauth_key}}
+default_swift_cluster = {{swift_swauth_default_cluster}}
 
 [filter:proxy-query]
 use = egg:zerocloud#proxy_query
