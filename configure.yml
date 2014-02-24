@@ -126,7 +126,7 @@
 
 - name: Pull rings
   tags: rings
-  hosts: storage:proxy
+  hosts: storage:proxy:auth-proxy
   roles:
     - {role: pull-rings, ring_master: "{{prefix}}-management"}
 

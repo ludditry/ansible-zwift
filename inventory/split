@@ -1,7 +1,3 @@
-# Split auth:
-#
-# Auth servers using oauth, with swauth as front-end
-#
 [split-template:children]
 split-non-storage
 split-storage
