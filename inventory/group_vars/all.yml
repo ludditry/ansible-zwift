@@ -91,7 +91,7 @@ rax_net_labels:
 - "{{ prefix }}-swift"
 
 # These should be overriden to loadbalanced vips for production clusters.
-swift_swauth_public_endpoint: "https://{{ansible_eth0['ipv4']['address']}}/v1"
+swift_swauth_public_endpoint: "http://{{ansible_eth0['ipv4']['address']}}/v1"
 swift_swauth_private_endpoint: "http://127.0.0.1/v1"
 swift_swauth_default_cluster:  "local#{{swift_swauth_public_endpoint}}#{{swift_swauth_private_endpoint}}"
 swift_users:
