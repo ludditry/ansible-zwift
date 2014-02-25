@@ -45,6 +45,39 @@ swift_swauth_key: CHANGEME
 # extra packages for provisioning
 swift_common_extra_packages: ["emacs24-nox"]
 
+# blarg -- oauth stuff
+swift_swauth_cluster_domain: "{{ansible_eth0['ipv4']['address']}}"
+swift_swauth_auth_domain: auth.zerovm.org
+
+# memcache for proxies
+swift_memcache_list: "127.0.0.1:11211"
+
+# These should be overriden to loadbalanced vips for production clusters.
+swift_swauth_public_endpoint: "http://{{swift_swauth_cluster_domain}}/v1"
+swift_swauth_default_cluster:  "local#{{swift_swauth_public_endpoint}}"
+swift_users:
+- "user": "admin"
+  "account": "admin"
+  "password": "admin"
+  "admin": true
+  "reseller_admin": true
+- "user": "tester"
+  "account": "test"
+  "password": "testing"
+  "admin": false
+  "reseller_admin": false
+- "user": "tester2"
+  "account": "test2"
+  "password": "testing2"
+  "admin": true
+  "reseller_admin": false
+- "user": "tester3"
+  "account": "test"
+  "password": "testing3"
+  "admin": false
+  "reseller_admin": false
+
+
 #
 # RAX provisioning data
 #
@@ -93,29 +126,3 @@ rax_net_labels:
 - private
 # CS/pyrax seems to add isolated networks in reverse order, so you're welcome
 - "{{ prefix }}-swift"
-
-# These should be overriden to loadbalanced vips for production clusters.
-swift_swauth_public_endpoint: "http://{{ansible_eth0['ipv4']['address']}}/v1"
-swift_swauth_private_endpoint: "http://127.0.0.1/v1"
-swift_swauth_default_cluster:  "local#{{swift_swauth_public_endpoint}}"
-swift_users:
-- "user": "admin"
-  "account": "admin"
-  "password": "admin"
-  "admin": true
-  "reseller_admin": true
-- "user": "tester"
-  "account": "test"
-  "password": "testing"
-  "admin": false
-  "reseller_admin": false
-- "user": "tester2"
-  "account": "test2"
-  "password": "testing2"
-  "admin": true
-  "reseller_admin": false
-- "user": "tester3"
-  "account": "test"
-  "password": "testing3"
-  "admin": false
-  "reseller_admin": false

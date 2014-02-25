@@ -95,7 +95,6 @@
   hosts: storage
   roles:
   - {role: storage}
-  - {role: rings, ring_master: "{{prefix}}-management"}
   - {role: object, tags: ['object']}
   - {role: container, tags: ['container']}
   - {role: account, tags: ['account']}
@@ -106,7 +105,18 @@
   tags: proxy
   hosts: proxy:auth-proxy
   roles:
-  - {role: proxy, swift_allow_account_management: "true"}
+  - {role: proxy, swift_allow_account_management: true}
+
+- name: Auth proxy configuration
+  tags: proxy
+  hosts: auth-proxy
+  roles:
+  - {role: proxy, swift_allow_account_management: true, swift_auth_type: liteauth}
+
+- name: Set up ring suckage
+  tags: rings
+  hosts: storage:proxy:auth-proxy
+  roles:
   - {role: rings, ring_master: "{{prefix}}-management"}
 
 - name: Build rings

@@ -8,6 +8,8 @@ swift_statsd_ip: "{{lookup('hostip', 'host={{swift_statsd_host}} cidr={{swift_st
 
 google_auth_client_id: unspecified
 google_auth_client_secret: unspecified
-google_auth_domain: oauthsucks.neoludditry.com
-google_auth_profile: https://www.googleapis.com/auth/userinfo.email
-google_auth_whitelist_url: /v1/liteauth/whitelist
+google_auth_scope: "https://www.googleapis.com/auth/userinfo.profile,https://www.googleapis.com/auth/userinfo.email"
+
+google_auth_redirect_url: https://{{swift_swauth_auth_domain}}/login/google
+google_auth_service_endpoint: "{{google_auth_redirect_url}}"
+google_auth_service_domain: "{{swift_swauth_cluster_domain}}"
