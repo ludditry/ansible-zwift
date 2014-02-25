@@ -42,6 +42,9 @@ swift_nets:
 swift_auth_type: swauth
 swift_swauth_key: CHANGEME
 
+# extra packages for provisioning
+swift_common_extra_packages: ["emacs24-nox"]
+
 #
 # RAX provisioning data
 #
