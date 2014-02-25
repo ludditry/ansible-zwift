@@ -22,7 +22,7 @@ swift_min_part_hours: 1
 # for source based deployments
 swift_source_deploy_dir: /opt/swift
 swift_source_deploy_site: "http://zwift-ci.zerovm.org"
-swift_source_deploy_version: "swift-00007"
+swift_source_deploy_version: "swift-00008"
 
 # base repos
 swift_base_repos:
