@@ -28,6 +28,7 @@ swift_source_deploy_version: "swift-00007"
 swift_base_repos:
   "http://mirrors.kernel.org/ubuntu precise": ["main", "restricted", "universe"]
   "http://mirrors.kernel.org/ubuntu precise-security": ["main", "restricted", "universe"]
+  "http://mirrors.kernel.org/ubuntu precise-updates": ["main", "restricted", "universe"]
 
 # net definitions
 swift_nets:
