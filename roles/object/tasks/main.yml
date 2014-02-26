@@ -10,6 +10,13 @@
 - include: package-install.yml
   when: swift_deployment_method|lower == "package"
 
+- name: Create zwift sysimage dir
+  file: path={{zwift_sysimage_dir}} state=directory mode=0755
+
+- name: Drop zerovm system images
+  get_url: url={{item.url}} dest={{zwift_sysimage_dir}}
+  with_items: zwift_sysimages
+
 - name: drop object-server conf
   template: dest=/etc/swift/object-server.conf src=object-server.conf.j2 owner=swift mode=0644
   notify: restart swift-object
