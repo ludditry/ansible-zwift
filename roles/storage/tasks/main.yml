@@ -5,6 +5,7 @@
   - xfsprogs
   - parted
   - rsync
+  - sqlite3
 
 - name: Ensure common storage packages
   apt: pkg={{item}} state=present
