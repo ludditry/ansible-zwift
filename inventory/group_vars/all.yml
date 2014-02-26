@@ -50,7 +50,7 @@ swift_swauth_cluster_domain: "{{ansible_eth0['ipv4']['address']}}"
 swift_swauth_auth_domain: auth.zerovm.org
 
 # memcache for proxies
-swift_memcache_list: "127.0.0.1:11211"
+swift_memcache_list: "{{lookup('memcache', swift_nets['swift'])}}"
 
 # These should be overriden to loadbalanced vips for production clusters.
 swift_swauth_public_endpoint: "http://{{swift_swauth_cluster_domain}}/v1"
