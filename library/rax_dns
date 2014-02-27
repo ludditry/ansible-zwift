@@ -112,7 +112,7 @@ except ImportError:
 def cloud_dns(module, state, rr_type, domain,
               rr_name, rr_data, priority, ttl, comment):
     for arg, value in dict(state=state, rr_type=rr_type,
-                           rr_name=rr_name, rr_data=rr_data).iteritems():
+                          rr_name=rr_name, rr_data=rr_data).iteritems():
         if not value:
             module.fail_json(msg='%s is required for cloud_dns' % arg)
 
@@ -142,7 +142,7 @@ def cloud_dns(module, state, rr_type, domain,
     real_domain = domain
     real_rr_name = rr_name
 
-    if domain is not None:
+    if domain is None:
         # find longest registered domain
         domain_array = rr_name.split('.')
         rr_name_array = []
@@ -160,11 +160,43 @@ def cloud_dns(module, state, rr_type, domain,
 
     dom = domainlist[real_domain]
 
-    rrlist=dict([("%s:%s" % (r.name, r.type), r)
+    rrlist=dict([('%s:%s' % (r.name, r.type), r)
                  for r in
                  list(dns.get_record_iterator(dom))])
 
-    print rrlist
+    existing_record = None
+    if '%s:%s' % (rr_name, rr_type) in rrlist:
+        existing_record = rrlist['%s:%s' % (rr_name, rr_type)]
+
+    if state == 'present':
+        if existing_record is None:
+            # create the record
+            changed = True
+            try:
+                dom.add_records([{'name': rr_name,
+                                  'type': rr_type,
+                                  'data': rr_data,
+                                  'ttl': ttl,
+                                  'comment': comment}])
+            except Exception as e:
+                module.fail_json(msg='Could not create record: %s' % e.message)
+        else:
+            if existing_record.data != rr_data:
+                changed = True
+                try:
+                    existing_record.update(data=rr_data, ttl=ttl, comment=comment)
+                except Exception as e:
+                    module.fail_json(msg='Could not update record: %s' % e.message)
+    elif state == 'absent':
+        if existing_record is None:
+            pass
+        else:
+            try:
+                existing_record.delete()
+            except Exception as e:
+                module.fail_json(msg='Could not delete existing record: %s' % e.message)
+
+            changed = True
 
     module.exit_json(changed=changed)
 
@@ -194,7 +226,7 @@ def main():
     region = module.params.get('region')
     state = module.params.get('state')
 
-    rr_type = module.params.get('type')
+    rr_type = module.params.get('rr_type')
     domain = module.params.get('domain')
     rr_name = module.params.get('rr_name')
     rr_data = module.params.get('rr_data')

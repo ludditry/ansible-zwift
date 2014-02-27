@@ -1,0 +1,65 @@
+#!/bin/bash
+
+set -e
+set -u
+
+function usage() {
+    echo "$0 [options]"
+    echo
+    echo "Valid options:"
+    echo
+    echo " -h               what you are reading now"
+    echo " -c cluster_name  make a cluster with this prefix"
+    echo " -e extra_vars    set extra vars (passed to ansible as -e)"
+    echo " -p profile       specify the provisioning profile to use (ex: simple, split)"
+    echo "some useful extra_vars might be:"
+    echo " -e swift_deployment_method=package - don't deploy from source"
+    echo " -e rax_keypair=something - use YOUR keypair name, not mine"
+    echo
+}
+
+INVENTORY_DIR=$(dirname $0)/inventory
+
+CLUSTER=c1
+EXTRA_ARGS=""
+OPTERR=1
+
+while getopts "hc:e:p:" OPTION; do
+    case ${OPTION} in
+        h)
+            usage
+            exit 0
+            ;;
+
+        c)
+            CLUSTER=${OPTARG}
+            ;;
+
+        e)
+            EXTRA_ARGS="${EXTRA_ARGS} -e ${OPTARG}"
+            ;;
+
+        ?)
+            usage
+            exit 1
+            ;;
+    esac
+done
+
+shift $((OPTIND - 1))
+
+for override in all ${PROFILE} ${CLUSTER}; do
+    if [ -e local/${override}.json ]; then
+        EXTRA_ARGS="-e @local/${override}.json ${EXTRA_ARGS}"
+    fi
+done
+
+PLAYBOOK="${1:-}"
+if [ ! -e "${PLAYBOOK}" ]; then
+    echo "Playbook ${PLAYBOOK} does not exist"
+    exit 1
+fi
+
+cmd="ansible-playbook "${PLAYBOOK}" -l "${CLUSTER}" -e prefix="${CLUSTER}" ${EXTRA_ARGS}"
+echo "Running \"${cmd}\""
+$cmd

@@ -1,0 +1,29 @@
+---
+- name: gather facts
+  hosts: all
+
+- name: register proxy
+  hosts: proxy
+  tasks:
+    - name: do the thing
+      local_action:
+        module: rax_dns
+        credentials: local/register_creds
+        rr_type: A
+        rr_name: "swift.{{dns_register_domain}}"
+        rr_data: "{{ansible_eth0['ipv4']['address']}}"
+        ttl: 300
+        state: present
+
+- name: register auth-proxy
+  hosts: auth-proxy
+  tasks:
+    - name: do the thing
+      local_action:
+        module: rax_dns
+        credentials: local/register_creds
+        rr_type: A
+        rr_name: "auth.{{dns_register_domain}}"
+        rr_data: "{{ansible_eth0['ipv4']['address']}}"
+        ttl: 300
+        state: present
