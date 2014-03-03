@@ -36,7 +36,7 @@
 
 - name: Deprovision Networks
   tags: deprovision-networks
-  hosts: local
+  hosts: localhost
   gather_facts: false
   tasks:
   - name: Deprovision networks

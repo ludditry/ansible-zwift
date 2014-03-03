@@ -48,7 +48,7 @@ done
 
 shift $((OPTIND - 1))
 
-for override in all ${PROFILE} ${CLUSTER}; do
+for override in all ${CLUSTER}; do
     if [ -e local/${override}.json ]; then
         EXTRA_ARGS="-e @local/${override}.json ${EXTRA_ARGS}"
     fi
