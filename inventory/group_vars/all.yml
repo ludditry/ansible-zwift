@@ -78,6 +78,7 @@ swift_users:
   "reseller_admin": false
 
 #zwift sys image data
+zwift_sysimage_dir: "/opt/zerovm/sysimages"
 zwift_sysimages:
 - "name": "python"
   "url": "http://packages.zerovm.org/zerovm-samples/python.tar"
