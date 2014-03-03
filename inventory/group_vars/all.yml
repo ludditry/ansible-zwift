@@ -77,6 +77,11 @@ swift_users:
   "admin": false
   "reseller_admin": false
 
+#zwift sys image data
+zwift_sysimages:
+- "name": "python"
+  "url": "http://packages.zerovm.org/zerovm-samples/python.tar"
+
 
 #
 # RAX provisioning data
