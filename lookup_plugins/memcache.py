@@ -46,8 +46,8 @@ class LookupModule(object):
                                                       not 'auth-proxy' in kwargs['vars']['groups']):
                     continue
 
-                if host not in kwargs['vars']['groups']['proxy'] and \
-                   host not in kwargs['vars']['groups']['auth-proxy']:
+                if host not in kwargs['vars']['groups'].get('proxy', []) and \
+                   host not in kwargs['vars']['groups'].get('auth-proxy', []):
                     continue
 
 
