@@ -14,7 +14,7 @@
   file: path={{zwift_sysimage_dir}} state=directory mode=0755
 
 - name: Drop zerovm system images
-  shell: curl -skS {{item.url}} >{{zwift_sysimage_dir}}/{{item.name}}.tar creates={{zwift_sysimage_dir}}/{{item.name}}.tar
+  shell: if curl -skS {{item.url}} >{{zwift_sysimage_dir}}/{{item.name}}.tar.tmp; then mv {{zwift_sysimage_dir}}/{{item.name}}.tar.tmp {{zwift_sysimage_dir}}/{{item.name}}.tar; fi creates={{zwift_sysimage_dir}}/{{item.name}}.tar
   with_items: zwift_sysimages
 
 - name: drop object-server conf
