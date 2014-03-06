@@ -13,6 +13,11 @@
   template: dest=/etc/default/graphite-carbon src=graphite-carbon.j2 mode=0644
   notify: restart carbon-cache
 
+- name: drop carbon schema
+  tags: monitoring
+  template: dest=/etc/carbon/storage-schemas.conf src=storage-schemas.conf.j2 mode=0644
+  notify: restart carbon-cache
+
 - name: drop graphite local_settings.py
   tags: monitoring
   template: dest=/etc/graphite/local_settings.py src=local_settings.py.j2 mode=0644
