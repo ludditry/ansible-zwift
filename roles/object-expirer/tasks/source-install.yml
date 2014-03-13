@@ -1,0 +1,3 @@
+---
+- name: Drop swift-object-expirer init scripts
+  template: dest=/etc/init.d/swift-object-expirer src=swift-object-expirer.init.j2 owner=root group=root mode=0755

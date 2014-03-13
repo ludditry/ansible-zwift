@@ -24,7 +24,7 @@
   - {role: statsd}
   - {role: graphite}
   - {role: dispersion}
-#  - {role: object-expirer}
+  - {role: object-expirer}
 
 # FIXME(rp): these dsh configuration should probably
 # be done serial: 1 so as not to race

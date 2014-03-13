@@ -7,7 +7,7 @@ log_facility = LOG_LOCAL2
 log_level = INFO
 
 [object-expirer]
-# interval = 300
+interval = {{swift_object_expirer_interval}}
 
 [pipeline:main]
 pipeline = catch_errors cache proxy-logging proxy-server

@@ -1,6 +1,9 @@
 ---
-- name: ensure object-expirer package
-  apt: pkg=swift-object-expirer
+- include: source-install.yml
+  when: swift_deployment_method|lower == "source"
+
+- include: package-install.yml
+  when: swift_deployment_method|lower == "package"
 
 - name: drop object-expirer conf
   template: dest=/etc/swift/object-expirer.conf src=object-expirer.conf.j2 owner=swift mode=0644

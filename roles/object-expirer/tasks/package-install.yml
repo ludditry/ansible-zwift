@@ -1,0 +1,3 @@
+---
+- name: ensure object-expirer package
+  apt: pkg=swift-object-expirer
