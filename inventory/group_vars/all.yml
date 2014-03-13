@@ -76,6 +76,11 @@ swift_users:
   "password": "testing3"
   "admin": false
   "reseller_admin": false
+- "user": "reporter"
+  "account": "dispersion"
+  "password": "dispersion"
+  "admin": true
+  "reseller_admin": false
 
 #zwift sys image data
 zwift_sysimage_dir: "/opt/zerovm/sysimages"

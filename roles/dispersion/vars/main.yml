@@ -1,7 +1,9 @@
 ---
-swift_dispersion_user: admin
-swift_dispersion_tenant: admin
-swift_dispersion_key: admin
+swift_dispersion_user: reporter
+swift_dispersion_tenant: dispersion
+swift_dispersion_key: dispersion
 swift_dispersion_coverage: 1
+swift_dispersion_retries: 5
+swift_dispersion_concurrency: 5
 swift_auth_version: 1.0
-swift_auth_url: http://localhost:8000/auth/v1.0
+swift_auth_url: "http://127.0.0.1:8080/auth/v1.0"

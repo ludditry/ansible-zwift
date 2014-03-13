@@ -23,6 +23,7 @@
   - {role: management}
   - {role: statsd}
   - {role: graphite}
+  - {role: dispersion}
 #  - {role: object-expirer}
 
 # FIXME(rp): these dsh configuration should probably

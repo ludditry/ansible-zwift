@@ -1,6 +1,6 @@
 # One time cluster setup items - should do dispersion population here, too
 ---
-- name: one-time setup
+- name: one-time setup (proxy)
   hosts: proxy
   tasks:
   - name: initialize swauth
@@ -12,3 +12,9 @@
   - name: create swauth users
     shell: swauth-add-user -A http://127.0.0.1:8080/auth/ -K {{swift_swauth_key}} {{" -a " if item.admin else "" }} {{" -r " if item.reseller_admin else ""}} {{item.account}} {{item.user}} {{item.password}} | wc -l | grep '^0$'
     with_items: swift_users
+
+- name: one-time setup (management)
+  hosts: management
+  tasks:
+  - name: populate dispersion containers
+    shell: swift-dispersion-populate && touch /etc/swift/dispersion.populated creates=/etc/swift/dispersion.populated
