@@ -59,3 +59,9 @@
   template: dest=/etc/collectd/conf.d/email.conf src=email.conf.j2
   notify: restart collectd
   when: swift_collectd_email_notifications and swift_mail_recipients|count > 0
+
+- name: Disable collectd email plugin
+  tags: monitoring
+  file: dest=/etc/collectd/conf.d/email.conf state=absent
+  notify: restart collectd
+  when: not swift_collectd_email_notifications
