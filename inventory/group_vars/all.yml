@@ -88,6 +88,14 @@ zwift_sysimages:
 - "name": "python"
   "url": "http://packages.zerovm.org/zerovm-samples/python.tar"
 
+#
+# Monitoring config
+#
+
+swift_collectd_email_notifications: false
+swift_mail_from_address: "monitoring@{{ansible_hostname}}"
+swift_mail_recipients:
+ - user1@somedomain.com
 
 #
 # RAX provisioning data

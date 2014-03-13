@@ -53,3 +53,9 @@
   template: dest=/etc/collectd/conf.d/graphite.conf src=graphite.conf.j2
   notify: restart collectd
   when: swift_collectd_server is defined and swift_collectd_server
+
+- name: Configure collectd email plugin
+  tags: monitoring
+  template: dest=/etc/collectd/conf.d/email.conf src=email.conf.j2
+  notify: restart collectd
+  when: swift_collectd_email_notifications and swift_mail_recipients|count > 0

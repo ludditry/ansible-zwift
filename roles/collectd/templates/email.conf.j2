@@ -1,0 +1,8 @@
+LoadPlugin "notify_email"
+<Plugin "notify_email">
+  From "{{swift_mail_from_address}}"
+  {% for email in swift_mail_recipients %}
+  Recipient "{{email}}"
+  {% endfor %}
+
+</Plugin>
