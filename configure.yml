@@ -104,7 +104,13 @@
 # for interal management proxy that we can swauth-init on
 - name: Proxy configuration
   tags: proxy
-  hosts: proxy:auth-proxy
+  hosts: proxy
+  roles:
+  - {role: proxy, swift_allow_account_management: false}
+
+- name: Auth proxy configuration
+  tags: proxy
+  hosts: management:auth-proxy
   roles:
   - {role: proxy, swift_allow_account_management: true}
 
@@ -168,7 +174,7 @@
 
 - name: ensure proxy services
   tags: services
-  hosts: proxy:auth-proxy
+  hosts: proxy:auth-proxy:management
   tasks:
     - name: ensure proxy service
       service: name=swift-proxy enabled=yes state=started

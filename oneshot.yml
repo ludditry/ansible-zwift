@@ -1,7 +1,7 @@
 # One time cluster setup items - should do dispersion population here, too
 ---
 - name: one-time setup (proxy)
-  hosts: proxy
+  hosts: management
   tasks:
   - name: initialize swauth
     shell: swauth-prep -K {{swift_swauth_key}} && touch /etc/swift/swauth.prepped creates=/etc/swift/swauth.prepped
