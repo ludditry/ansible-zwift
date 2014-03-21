@@ -45,16 +45,17 @@ swift_swauth_key: CHANGEME
 # extra packages for provisioning
 swift_common_extra_packages: ["emacs24-nox"]
 
-# blarg -- oauth stuff
-swift_swauth_cluster_domain: "{{ansible_eth0['ipv4']['address']}}"
+
+#swauth stuff
 swift_swauth_auth_domain: auth.zerovm.org
 
 # memcache for proxies
 swift_memcache_list: "{{lookup('memcache', swift_nets['swift'])}}"
 
 # These should be overriden to loadbalanced vips for production clusters.
-swift_swauth_public_endpoint: "http://{{swift_swauth_cluster_domain}}/v1"
-swift_swauth_default_cluster:  "local#{{swift_swauth_public_endpoint}}"
+swift_swauth_cluster_domain: "{{hostvars[prefix + '-proxy']['ansible_eth0']['ipv4']['address']}}"
+swift_swauth_public_endpoint: "http://{{swift_swauth_cluster_domain}}:80/v1"
+swift_swauth_default_cluster:  "local#{{swift_swauth_public_endpoint}}#http://127.0.0.1:8080/v1"
 swift_users:
 - "user": "admin"
   "account": "admin"
