@@ -203,10 +203,12 @@ def setup():
             sys.stderr.write('No value in environment variables and/or no '
                              'credentials file at %s\n'
                              % default_creds_file)
-            sys.exit(1)
+            print '{}'
+            sys.exit(0)
     except Exception as e:
         sys.stderr.write("%s: %s\n" % (e, e.message))
-        sys.exit(1)
+        print '{}'
+        sys.exit(0)
 
     regions = []
     for region in os.getenv('OS_REGION_NAME', 'all').split(','):
