@@ -107,22 +107,32 @@ oauth_provider = google_oauth
 [filter:litequota]
 use = egg:liteauth#litequota
 services_url = /v1/liteauth/services
+whitelist_url = /v1/liteauth/whitelist
 
 [filter:lite-swauth]
 use = egg:liteauth#liteswauth
 whitelist_url = /v1/liteauth/whitelist
 invite_url = /v1/liteauth/invites
 super_admin_key = {{swift_swauth_key}}
+cors_allow_origin = http://{{swift_auth_domain}}, http://{{swift_swauth_cluster_domain}}
 
-[filter:oauth-login]
+[filter:oauth-login-g]
 use = egg:liteauth#oauthlogin
 oauth_provider = google_oauth
 google_client_id = {{google_auth_client_id}}
 google_client_secret = {{google_auth_client_secret}}
 google_scope = {{google_auth_scope}}
-google_redirect_url = {{google_auth_redirect_url}}
-service_endpoint = {{google_auth_service_endpoint}}
+auth_endpoint = {{google_auth_endpoint}}
 service_domain = {{google_auth_service_domain}}
+
+[filter:oauth-login-fb]
+use = egg:liteauth#oauthlogin
+oauth_provider = facebook_oauth
+facebook_client_id = {{fb_auth_client_id}}
+facebook_client_secret = {{fb_auth_client_secret}}
+facebook_scope = {{fb_auth_scope}}
+auth_endpoint = {{fb_auth_endpoint}}
+service_domain = {{fb_auth_service_domain}}
 
 [filter:swauth]
 use = egg:swauth#swauth
@@ -137,12 +147,11 @@ zerovm_sysimage_devices = {% for item in zwift_sysimages %}
  {{ item.name }} {{ zwift_sysimage_dir }}/{{ item.name }}.tar
 {%- endfor %}
 
-
 [pipeline:main]
 {% if swift_auth_type == 'tempauth' %}
 pipeline = catch_errors proxy-logging healthcheck cache ratelimit tempauth proxy-logging proxy-query proxy-server
 {% elif swift_auth_type == 'liteauth' %}
-pipeline = catch_errors proxy-logging healthcheck cache ratelimit oauth-login liteauth-token lite-swauth swauth proxy-logging proxy-server
+pipeline = catch_errors proxy-logging healthcheck cache ratelimit liteauth-token oauth-login-g lite-swauth swauth proxy-logging proxy-server
 {% elif swift_auth_type == 'swauth' %}
 pipeline = catch_errors proxy-logging healthcheck cache ratelimit swauth proxy-logging proxy-query proxy-server
 {% endif %}
