@@ -2,6 +2,7 @@
 # Default prefix
 prefix: c1
 
+ansible_ssh_pass: "No bacon for wilk!"
 #
 # Swift specific settings
 #
@@ -11,6 +12,14 @@ swift_hash_prefix: "SOMERANDOMSTRING"
 swift_statsd_host: "{{prefix}}-management"
 swift_carbon_host: "{{prefix}}-management"
 swift_collectd_host: "{{prefix}}-management"
+swift_syslog_host: "{{prefix}}-management"
+swift_ring_master_host: "{{prefix}}-management"
+swift_dsh_host: "{{prefix}}-management"
+
+# role defs
+swift_syslog_server_role: management
+swift_lb_role: proxy
+
 swift_generate_rings: true
 swift_deployment_method: source
 
@@ -44,7 +53,6 @@ swift_swauth_key: CHANGEME
 
 # extra packages for provisioning
 swift_common_extra_packages: ["emacs24-nox"]
-
 
 #swauth stuff
 swift_swauth_auth_domain: auth.zerovm.org

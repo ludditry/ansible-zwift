@@ -1,0 +1,12 @@
+#
+# {{ansible_managed}}
+#
+
+# Dell PowerEdge 810 with PERC H800
+# Dell PowerEdge 710 with PERC H800
+{% for x in range(0,45) %}
+KERNELS=="1:2:{{x}}:0", ENV{DEVTYPE}=="disk" ATTRS{model}=="PERC H800", KERNEL=="sd*", NAME="swift/c1u{{x}}"
+KERNELS=="1:2:{{x}}:0", ENV{DEVTYPE}=="partition" ATTRS{model}=="PERC H800", KERNEL=="sd*", NAME="swift/c1u{{x}}p%n"
+{% endfor %}
+
+

@@ -1,11 +1,18 @@
 ---
+- name: Test confirmation
+  hosts: all
+  gather_facts: false
+  tasks:
+  - name: do check
+    fail: msg="you must set up a cluster yml file with cluster_confirm = prefix"
+    when: prefix != cluster_confirm
+
 - name: gather facts
   hosts: all
 
 - name: Base configs for all servers
   tags: base
   hosts: all
-  gather_facts: false
   roles:
   - {role: base}
 
@@ -29,32 +36,32 @@
 # FIXME(rp): these dsh configuration should probably
 # be done serial: 1 so as not to race
 - name: DSH Configuration (swift)
-  tags: management
+  tags: management,dsh
   hosts: all:!management
   roles:
   - role: dsh
-    dsh_server: "{{prefix}}-management"
+    dsh_server: "{{swift_dsh_host}}"
     dsh_group: swift
 
 - name: DSH Configuration (proxy)
-  tags: management
+  tags: management,dsh
   hosts: proxy:auth-proxy
   roles:
   - role: dsh
-    dsh_server: "{{prefix}}-management"
+    dsh_server: "{{swift_dsh_host}}"
     dsh_group: proxy
 
 - name: DSH Configuration (storage)
-  tags: management
+  tags: management,dsh
   hosts: storage
   roles:
   - role: dsh
-    dsh_server: "{{prefix}}-management"
+    dsh_server: "{{swift_dsh_host}}"
     dsh_group: storage
 
 # Set up syslog
 - name: syslog server
-  hosts: management
+  hosts: "{{swift_syslog_server_role}}"
   tags: syslog
   roles:
   - {role: syslog, swift_syslog_role: server}
@@ -63,7 +70,7 @@
   hosts: storage:proxy:auth-proxy
   tags: syslog
   roles:
-  - {role: syslog, swift_syslog_host: "{{prefix}}-management"}
+  - {role: syslog}
 
 # Apply sysctls
 - name: proxy sysctls
@@ -100,8 +107,6 @@
   - {role: container, tags: ['container']}
   - {role: account, tags: ['account']}
 
-# we're going to allow account management here until we have a config
-# for interal management proxy that we can swauth-init on
 - name: Proxy configuration
   tags: proxy
   hosts: proxy
@@ -124,28 +129,29 @@
   tags: rings
   hosts: storage:proxy:auth-proxy
   roles:
-  - {role: rings, ring_master: "{{prefix}}-management"}
+  - {role: rings, ring_master: "{{swift_ring_master_host}}"}
 
 - name: Build rings
   tags: rings
   hosts: storage
   serial: 1
   roles:
-    - {role: generate-rings, ring_master: "{{prefix}}-management", when: swift_generate_rings == true}
+    - {role: generate-rings, ring_master: "{{swift_ring_master_host}}", when: swift_generate_rings}
 
 - name: Rebalance rings
   tags: rings
   hosts: management
   roles:
-    - {role: rebalance-rings, ring: object}
-    - {role: rebalance-rings, ring: container}
-    - {role: rebalance-rings, ring: account}
+    - {role: rebalance-rings, ring: object, when: swift_generate_rings}
+    - {role: rebalance-rings, ring: container, when: swift_generate_rings}
+    - {role: rebalance-rings, ring: account, when: swift_generate_rings}
 
 - name: Pull rings
   tags: rings
   hosts: storage:proxy:auth-proxy
   roles:
-    - {role: pull-rings, ring_master: "{{prefix}}-management"}
+    - {role: pull-rings, ring_master: "{{prefix}}-management", when: swift_generate_rings}
+  
 
 # This is awkward... straddles the line between bootstrap and ongoing
 # config management
@@ -179,11 +185,11 @@
     - name: ensure proxy service
       service: name=swift-proxy enabled=yes state=started
 
-- name: zwift configuration
-  tags: zwift
-  hosts: proxy:auth-proxy
-  roles:
-  - {role: zwift-ui}
+# - name: zwift configuration
+#   tags: zwift
+#   hosts: proxy:auth-proxy
+#   roles:
+#   - {role: zwift-ui}
 
 - name: postfix relay config
   tags: mail
@@ -199,6 +205,6 @@
 
 - name: haproxy configuration
   tags: lb
-  hosts: proxy
+  hosts: "{{swift_lb_role}}"
   roles:
   - {role: haproxy}

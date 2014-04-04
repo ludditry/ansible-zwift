@@ -1,15 +1,18 @@
 ---
-# FIXME(rp): need network lookup
+# Can't do this with repl net, sadly.  :(
 - name: Add object disks
   command: drivescout -y -r {{lookup('hostip', 'cidr={{swift_nets["swift"]}}')}} -p 6000 --zone={{swift_zone}} -w 100 /etc/swift/object.builder chdir=/etc/swift
   delegate_to: "{{ring_master}}"
+  when: swift_manage_ring
 
-# FIXME(rp): need network lookup
 - name: Add container disks
   command: drivescout -y -r {{lookup('hostip', 'cidr={{swift_nets["swift"]}}')}} -p 6001 --zone={{swift_zone}} -w 100 /etc/swift/container.builder chdir=/etc/swift
   delegate_to: "{{ring_master}}"
+  when: swift_manage_ring
 
-# FIXME(rp): need network lookup
 - name: Add account disks
   command: drivescout -y -r {{lookup('hostip', 'cidr={{swift_nets["swift"]}}')}} -p 6002 --zone={{swift_zone}} -w 100 /etc/swift/account.builder chdir=/etc/swift
   delegate_to: "{{ring_master}}"
+  when: swift_manage_ring
+
+
