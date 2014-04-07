@@ -6,10 +6,17 @@ swift_statsd_host: "{{prefix}}-management"
 swift_statsd_net: "{{swift_nets['monitoring']}}"
 swift_statsd_ip: "{{lookup('hostip', 'host={{swift_statsd_host}} cidr={{swift_statsd_net}}')}}"
 
+# google auth
 google_auth_client_id: unspecified
 google_auth_client_secret: unspecified
 google_auth_scope: "https://www.googleapis.com/auth/userinfo.profile,https://www.googleapis.com/auth/userinfo.email"
 
-google_auth_redirect_url: https://{{swift_swauth_auth_domain}}/login/google
-google_auth_service_endpoint: "{{google_auth_redirect_url}}"
+google_auth_endpoint: https://{{swift_swauth_auth_domain}}/login/google
 google_auth_service_domain: "{{swift_swauth_cluster_domain}}"
+
+# fb auth
+fb_auth_client_id: unspecified
+fb_auth_client_secret: unspecified
+fb_auth_scope: basic_info,email
+fb_auth_endpoint: https://{{swift_swauth_auth_domain}}/login/fb
+fb_auth_service_domain: "{{swift_swauth_cluster_domain}}"
