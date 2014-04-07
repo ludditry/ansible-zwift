@@ -185,11 +185,11 @@
     - name: ensure proxy service
       service: name=swift-proxy enabled=yes state=started
 
-# - name: zwift configuration
-#   tags: zwift
-#   hosts: proxy:auth-proxy
-#   roles:
-#   - {role: zwift-ui}
+- name: zwift configuration
+  tags: zwift
+  hosts: auth-proxy
+  roles:
+  - {role: zwift-ui}
 
 - name: postfix relay config
   tags: mail
