@@ -114,7 +114,7 @@ use = egg:liteauth#liteswauth
 whitelist_url = /v1/liteauth/whitelist
 invite_url = /v1/liteauth/invites
 super_admin_key = {{swift_swauth_key}}
-cors_allow_origin = http://{{swift_auth_domain}}, http://{{swift_swauth_cluster_domain}}
+cors_allow_origin = http://{{swift_swauth_auth_domain}}, http://{{swift_swauth_cluster_domain}}
 
 [filter:oauth-login-g]
 use = egg:liteauth#oauthlogin
