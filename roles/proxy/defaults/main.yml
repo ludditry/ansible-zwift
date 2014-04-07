@@ -15,8 +15,8 @@ google_auth_endpoint: https://{{swift_swauth_auth_domain}}/login/google
 google_auth_service_domain: "{{swift_swauth_cluster_domain}}"
 
 # fb auth
-fb_auth_client_id = unspecified
-fb_auth_client_secret = unspecified
-fb_auth_scope = basic_info,email
-fb_auth_endpoint = "https://{{swift_swauth_auth_domain}}/login/fb
+fb_auth_client_id: unspecified
+fb_auth_client_secret: unspecified
+fb_auth_scope: basic_info,email
+fb_auth_endpoint: "https://{{swift_swauth_auth_domain}}/login/fb
 fb_auth_service_domain: "{{swift_swauth_cluster_domain}}"
