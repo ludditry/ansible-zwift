@@ -1,0 +1,22 @@
+# One time cluster setup items - should do dispersion population here, too
+---
+- name: one-time setup (proxy)
+  hosts: all
+  tasks:
+  - name: Ensure kdump packages
+    apt: pkg=linux-crashdump state=present
+
+  - name: Change initrd to use MODULES=dep instead of MODULES=most
+    shell: sed -i 's/MODULES=most/MODULES=dep/' /etc/initramfs-tools/initramfs.conf
+    notify: remake initrd
+
+  - name: Update grub for crashkernel
+    shell:  sed -i 's/GRUB_CMDLINE_EXTRA="$GRUB_CMDLINE_EXTRA crashkernel=384M-2G:64M,2G-:128M"/GRUB_CMDLINE_EXTRA="$GRUB_CMDLINE_EXTRA crashkernel=256M"/' /etc/grub.d/10_linux
+    notify: update grub
+
+  handlers:
+  - name: remake initrd
+    shell: "dpkg-reconfigure linux-image-$(uname -r)"
+
+  - name: update grub
+    shell: "update-grub2"
