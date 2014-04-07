@@ -2,7 +2,6 @@
 # Default prefix
 prefix: c1
 
-ansible_ssh_pass: "No bacon for wilk!"
 #
 # Swift specific settings
 #
