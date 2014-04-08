@@ -187,7 +187,7 @@
 
 - name: zwift configuration
   tags: zwift
-  hosts: "{{swift_ui_mode}}"
+  hosts: "{{swift_ui_role}}"
   roles:
   - {role: zwift-ui}
 

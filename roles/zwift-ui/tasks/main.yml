@@ -3,7 +3,8 @@
 - name: install git and apache
   apt: pkg={{item}} state=present
   with_items:
-    - apache2-mpm-worker apache2
+    - apache2-mpm-worker 
+    - apache2
     - git
 
 - name: checkout zwift ui
