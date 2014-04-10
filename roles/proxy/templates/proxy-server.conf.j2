@@ -153,5 +153,5 @@ pipeline = catch_errors proxy-logging healthcheck cache ratelimit tempauth proxy
 {% elif swift_auth_type == 'liteauth' %}
 pipeline = catch_errors proxy-logging healthcheck cache ratelimit liteauth-token oauth-login-g lite-swauth swauth proxy-logging proxy-server
 {% elif swift_auth_type == 'swauth' %}
-pipeline = catch_errors proxy-logging healthcheck cache ratelimit swauth proxy-logging proxy-query proxy-server
+pipeline = catch_errors proxy-logging healthcheck cache ratelimit liteauth-token swauth proxy-logging proxy-query proxy-server
 {% endif %}
