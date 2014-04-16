@@ -4,6 +4,11 @@
   with_items:
   - haproxy
 
+- name: drop syslog config for haproxy
+  template: src=rsyslog-haproxy.conf.j2 dest=/etc/rsyslog.d/haproxy.conf owner=root mode=0644
+  notify:
+  - restart rsyslog
+
 - name: drop haproxy default file
   template: src=haproxy.j2 dest=/etc/default/haproxy owner=root mode=0644
 

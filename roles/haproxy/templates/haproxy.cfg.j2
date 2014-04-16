@@ -2,6 +2,18 @@
 
 global
         log {{swift_syslog_ip}} local5
+        tune.bufsize {{swift_haproxy_header_size}}
+
+        # timeout check
+        # timeout client
+        # timeout connect
+        # timeout http-keep-alive
+        # timeout http-request
+        # timeout queue
+        # timeout server
+        # timeout tarpit
+        # timeout tunnel
+
         chroot /var/lib/haproxy
         user haproxy
         group haproxy
@@ -27,7 +39,7 @@ frontend https-in
          option http-server-close
          bind *:443 ssl crt /etc/haproxy/haproxy.pem
 
-         acl is_swift_api url_beg /v1 /auth
+         acl is_swift_api url_beg /v1 /auth /open
          acl is_auth_api url_beg /login
          use_backend auth if is_auth_api
          use_backend swift if is_swift_api
