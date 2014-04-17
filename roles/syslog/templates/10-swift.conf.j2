@@ -5,29 +5,42 @@ $ModLoad imudp
 $UDPServerRun 514
 {% endif %}
 
+{% if swift_syslog_role is not defined or swift_syslog_role != 'server' %}
+local0.*;local1.*;local2.*;local3.* @{{swift_syslog_ip}}
+{% endif %}
+
 if $syslogfacility-text == 'local0' and \
    ($syslogseverity-text == 'info' or $syslogseverity-text == 'debug') and not \
    ($msg contains 'GET /healthcheck' or $msg contains 'GET /lbstats') then /var/log/swift/proxy.log
+& ~
 
 if $syslogfacility-text == 'local0' and \
    ($syslogseverity-text != 'info' and $syslogseverity-text != 'debug') and not \
    ($msg contains 'GET /healthcheck' or $msg contains 'GET /lbstats') then /var/log/swift/proxy.err
+& ~
 
 if $syslogfacility-text == 'local0' and \
    ($msg contains 'GET /healthcheck' or $msg contains 'GET /lbstats') then /var/log/swift/healthchk.log
+& ~
 
 local1.=info;local1.=debug /var/log/swift/storage.log
+& ~                               
 local1.*;local1.!=info;local1.!=debug /var/log/swift/storage.err
+& ~
 
 local2.=info;local2.=debug /var/log/swift/jobs.log
+& ~
 local2.*;local2.!=info;local2.!=debug /var/log/swift/jobs.err
+& ~
 
 local3.=info;local3.=debug /var/log/swift/drive-audit.log
+& ~
 local3.*;local3.!=info;local3.!=debug /var/log/swift/drive-audit.err
+& ~
 
 local4.=info;local4.=debug /var/log/swift/swift-log-processor.log
+& ~
 local4.*;local4.!=info;local4.!=debug /var/log/swift/swift-log-processor.err
+& ~
 
-{% if swift_syslog_role is not defined or swift_syslog_role != 'server' %}
-local0.*;local1.*;local2.*;local3.* @{{swift_syslog_ip}}
-{% endif %}
+
