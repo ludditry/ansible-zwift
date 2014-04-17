@@ -23,7 +23,8 @@ swift_syslog_server_role: management
 swift_lb_role: proxy
 swift_ui_role: "proxy:auth-proxy"
 
-swift_generate_rings: true
+swift_manage_rings: true
+swift_manage_disks: true
 swift_deployment_method: source
 
 # for ring creation
