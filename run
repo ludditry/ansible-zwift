@@ -51,6 +51,8 @@ shift $((OPTIND - 1))
 for override in all ${CLUSTER}; do
     if [ -e local/${override}.json ]; then
         EXTRA_ARGS="-e @local/${override}.json ${EXTRA_ARGS}"
+    elif [ -e local/${override}.yml ]; then
+        EXTRA_ARGS="-e @local/${override}.yml ${EXTRA_ARGS}"
     fi
 done
 

@@ -1,0 +1,21 @@
+---
+- name: Test confirmation
+  hosts: all
+  gather_facts: false
+  tasks:
+  - name: do check
+    fail: msg="you must set up a cluster yml file with cluster_confirm = prefix"
+    when: prefix != cluster_confirm
+
+- name: Make the omsas go
+  hosts: all
+  gather_facts: true
+  tasks:
+    - name: import omsa key
+      command: apt-key adv --keyserver pool.sks-keyservers.net --recv-keys 1285491434D8786F
+    - name: add omsa repo
+      apt_repository: repo="deb http://linux.dell.com/repo/community/deb/latest /" state=present update_cache=yes
+    - name: install omsa
+      apt: pkg=srvadmin-all
+    - name: start dataeng service
+      service: name=dataeng state=started enabled=yes

@@ -2,6 +2,18 @@
 
 global
         log {{swift_syslog_ip}} local5
+        tune.bufsize {{swift_haproxy_header_size}}
+
+        # timeout check
+        # timeout client
+        # timeout connect
+        # timeout http-keep-alive
+        # timeout http-request
+        # timeout queue
+        # timeout server
+        # timeout tarpit
+        # timeout tunnel
+
         chroot /var/lib/haproxy
         user haproxy
         group haproxy
@@ -44,7 +56,7 @@ backend swift
 
 backend auth
 {% for item in hostvars %}
-{%     if item in groups['auth-proxy'] %}
+{%     if 'auth-proxy' in groups and item in groups['auth-proxy'] %}
 {%         set lookup_string = "host=" + item + " cidr=" + swift_nets['proxy'] %}
 {%         set result = lookup('hostip', lookup_string) %}
     server {{item}} {{result}}:8080 check

@@ -28,3 +28,4 @@
 
 - name: drop a proper proxy-server.conf
   template: dest=/etc/swift/proxy-server.conf src=proxy-server.conf.j2 owner=swift group=swift mode=0644
+  notify: restart proxy

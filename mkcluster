@@ -18,10 +18,10 @@ function usage() {
     echo
 }
 
-INVENTORY_DIR=$(dirname $0)/inventory
+PROV_DIR=$(dirname $0)/prov_templ
 
 CLUSTER=c1
-EXTRA_ARGS=""
+EXTRA_ARGS="-e @${PROV_DIR}/prov-vars.yml"
 PROFILE=simple
 OPTERR=1
 while getopts "hc:e:p:" OPTION; do
@@ -41,6 +41,10 @@ while getopts "hc:e:p:" OPTION; do
 
         p)
             PROFILE=${OPTARG}
+            if [ ! -e "${PROV_DIR}/${PROFILE}" ]; then
+                print "Cannot find provisioning template: ${PROFILE}"
+                exit 1
+            fi
             ;;
 
         ?)
@@ -56,6 +60,6 @@ for override in all ${PROFILE} ${CLUSTER}; do
     fi
 done
 
-cmd="ansible-playbook provision.yml -i "${INVENTORY_DIR}/${PROFILE}" -e prefix=${CLUSTER} -e profile=${PROFILE} ${EXTRA_ARGS}"
+cmd="ansible-playbook provision.yml -i ${PROV_DIR}/${PROFILE} ${EXTRA_ARGS} -e prefix=${CLUSTER} -e profile=${PROFILE}"
 echo "Running \"${cmd}\""
 $cmd

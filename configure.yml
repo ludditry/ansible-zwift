@@ -136,21 +136,21 @@
   hosts: storage
   serial: 1
   roles:
-    - {role: generate-rings, ring_master: "{{swift_ring_master_host}}", when: swift_generate_rings}
+    - {role: generate-rings, ring_master: "{{swift_ring_master_host}}", when: swift_manage_rings}
 
 - name: Rebalance rings
   tags: rings
   hosts: management
   roles:
-    - {role: rebalance-rings, ring: object, when: swift_generate_rings}
-    - {role: rebalance-rings, ring: container, when: swift_generate_rings}
-    - {role: rebalance-rings, ring: account, when: swift_generate_rings}
+    - {role: rebalance-rings, ring: object, when: swift_manage_rings}
+    - {role: rebalance-rings, ring: container, when: swift_manage_rings}
+    - {role: rebalance-rings, ring: account, when: swift_manage_rings}
 
 - name: Pull rings
   tags: rings
   hosts: storage:proxy:auth-proxy
   roles:
-    - {role: pull-rings, ring_master: "{{prefix}}-management", when: swift_generate_rings}
+    - {role: pull-rings, ring_master: "{{prefix}}-management", when: swift_manage_rings}
   
 
 # This is awkward... straddles the line between bootstrap and ongoing

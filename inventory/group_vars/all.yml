@@ -2,6 +2,9 @@
 # Default prefix
 prefix: c1
 
+# Root ahoy!
+ansible_ssh_user: root
+
 #
 # Swift specific settings
 #
@@ -20,7 +23,8 @@ swift_syslog_server_role: management
 swift_lb_role: proxy
 swift_ui_role: "proxy:auth-proxy"
 
-swift_generate_rings: true
+swift_manage_rings: true
+swift_manage_disks: true
 swift_deployment_method: source
 
 # for ring creation
@@ -110,47 +114,46 @@ swift_mail_recipients:
 # RAX provisioning data
 #
 
-# Root ahoy!
-ansible_ssh_user: root
+# These are all moved to prov_templ/group_vars
 
-# pyrax format creds file
-rax_creds: rax_creds
+# # pyrax format creds file
+# rax_creds: rax_creds
 
-# Datacenter region
-rax_region: "{{lookup('env','OS_REGION_NAME')}}"
+# # Datacenter region
+# rax_region: "{{lookup('env','OS_REGION_NAME')}}"
 
-# rax username (for rax prov)
-rax_username: "{{lookup('env','OS_USERNAME')}}"
+# # rax username (for rax prov)
+# rax_username: "{{lookup('env','OS_USERNAME')}}"
 
-# rax api key (for rax prov)
-rax_api_key: "{{lookup('env','OS_PASSWORD')}}"
+# # rax api key (for rax prov)
+# rax_api_key: "{{lookup('env','OS_PASSWORD')}}"
 
-# The keypair must already exist
-rax_keypair: "{{lookup('env', 'USER')}}"
+# # The keypair must already exist
+# rax_keypair: "{{lookup('env', 'USER')}}"
 
-# -- Flavors --
-# RAM: 4096MB, Disk: 160GB, Ephemeral: 0, Swap: 2048MB, VCPUs: 2, RXTX Factor: 10.0
-#rax_prov_flavor: 5
+# # -- Flavors --
+# # RAM: 4096MB, Disk: 160GB, Ephemeral: 0, Swap: 2048MB, VCPUs: 2, RXTX Factor: 10.0
+# #rax_prov_flavor: 5
 
-# RAM: 4096MB, Disk: 40GB (SSD), Ephemeral: 40GB, Swap: 0, VCPUS: 4, RXTX Factor: 800.0
-rax_prov_flavor: performance1-2
+# # RAM: 4096MB, Disk: 40GB (SSD), Ephemeral: 40GB, Swap: 0, VCPUS: 4, RXTX Factor: 800.0
+# rax_prov_flavor: performance1-2
 
-#rax_prov_flavor: 2
+# #rax_prov_flavor: 2
 
-# -- Images --
-# CentOS 6.4
-#rax_prov_image: f70ed7c7-b42e-4d77-83d8-40fa29825b85
-# Ubuntu Precise 12.04.3
-rax_prov_image: c3153cde-2d23-4186-b7da-159adbe2858b
-# Debian 7.0
-#rax_prov_image: 857d7d36-34f3-409f-8435-693e8797be8b
+# # -- Images --
+# # CentOS 6.4
+# #rax_prov_image: f70ed7c7-b42e-4d77-83d8-40fa29825b85
+# # Ubuntu Precise 12.04.3
+# rax_prov_image: c3153cde-2d23-4186-b7da-159adbe2858b
+# # Debian 7.0
+# #rax_prov_image: 857d7d36-34f3-409f-8435-693e8797be8b
 
-# Manual for the fastness
-rax_diskconfig: manual
+# # Manual for the fastness
+# rax_diskconfig: manual
 
-# Cloud Networks to attach
-rax_net_labels:
-- public
-- private
-# CS/pyrax seems to add isolated networks in reverse order, so you're welcome
-- "{{ prefix }}-swift"
+# # Cloud Networks to attach
+# rax_net_labels:
+# - public
+# - private
+# # CS/pyrax seems to add isolated networks in reverse order, so you're welcome
+# - "{{ prefix }}-swift"

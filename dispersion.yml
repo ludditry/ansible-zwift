@@ -1,6 +1,0 @@
----
-- name: Configure dispersion reports
-  hosts: management
-  roles:
-  - {role: dispersion}
-

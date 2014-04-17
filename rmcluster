@@ -10,4 +10,4 @@ fi
 
 CLUSTER=${1:-c1}
 
-ansible-playbook deprovision.yml -l${CLUSTER}:localhost -e prefix=${CLUSTER}
+ansible-playbook deprovision.yml -l${CLUSTER}:localhost -e @prov_templ/prov-vars.yml -e prefix=${CLUSTER}
