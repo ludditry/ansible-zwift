@@ -60,6 +60,6 @@ for override in all ${PROFILE} ${CLUSTER}; do
     fi
 done
 
-cmd="ansible-playbook provision.yml -i "${PROV_DIR}/${PROFILE}" -e prefix=${CLUSTER} -e profile=${PROFILE} ${EXTRA_ARGS}"
+cmd="ansible-playbook provision.yml -i ${PROV_DIR}/${PROFILE} ${EXTRA_ARGS} -e prefix=${CLUSTER} -e profile=${PROFILE}"
 echo "Running \"${cmd}\""
 $cmd
