@@ -1,0 +1,4 @@
+---
+swift_graphite_host: "{{prefix}}-management"
+swift_graphite_net: "{{swift_nets['monitoring']}}"
+swift_graphite_ip: "{{lookup('hostip', 'host={{swift_graphite_host}} cidr={{swift_graphite_net}}')}}"

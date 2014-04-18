@@ -18,11 +18,6 @@ swift_syslog_host: "{{prefix}}-management"
 swift_ring_master_host: "{{prefix}}-management"
 swift_dsh_host: "{{prefix}}-management"
 
-# role defs
-swift_syslog_server_role: management
-swift_lb_role: proxy
-swift_ui_role: "proxy:auth-proxy"
-
 swift_manage_rings: true
 swift_manage_disks: true
 swift_deployment_method: source
@@ -66,7 +61,7 @@ swift_memcache_list: "{{lookup('memcache', swift_nets['swift'])}}"
 
 # These should be overriden to loadbalanced vips for production clusters.
 swift_swauth_cluster_domain: "{{hostvars[prefix + '-proxy']['ansible_eth0']['ipv4']['address']}}"
-swift_swauth_public_endpoint: "http://{{swift_swauth_cluster_domain}}:80/v1"
+swift_swauth_public_endpoint: "https://{{swift_swauth_cluster_domain}}/v1"
 swift_swauth_default_cluster:  "local#{{swift_swauth_public_endpoint}}#http://127.0.0.1:8080/v1"
 swift_users:
 - "user": "admin"

@@ -2,3 +2,9 @@
 swift_collectd_host: "{{prefix}}-management"
 swift_collectd_net: "{{swift_nets['monitoring']}}"
 swift_collectd_ip: "{{lookup('hostip', 'host={{swift_collectd_host}} cidr={{swift_collectd_net}}')}}"
+
+swift_graphite_host: "{{prefix}}-management"
+swift_graphite_net: "{{swift_nets['monitoring']}}"
+swift_graphite_ip: "{{lookup('hostip', 'host={{swift_graphite_host}} cidr={{swift_graphite_net}}')}}"
+
+swift_collectd_host_bind: "0.0.0.0"
