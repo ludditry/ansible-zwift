@@ -5,7 +5,7 @@ LoadPlugin network
        Server {{swift_collectd_ip}} "25826"
 
        # server setup:
-       {% if swift_collectd_server is defined and swift_collectd_server and swift_collectd_host_bind is defined %}
+       {% if swift_collectd_host == inventory_hostname %}
        Listen "{{swift_collectd_host_bind}}" "25826"
        TimeToLive 128
        {% endif %}
