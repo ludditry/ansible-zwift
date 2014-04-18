@@ -1,0 +1,32 @@
+[main]
+#graphite host and port to connect too
+graphite_host = {{swift_graphite_ip}}
+graphite_port = 2003
+graphite_pickle_port = 2004
+
+#address and port we should listen for udp packets on
+listen_addr = {{swift_statsd_host_bind}}
+listen_port = 8125
+
+#If you track a large number of metrics you should you should report using
+#graphites pickle protocol. In that case switch this to yes to enable it.
+pickle_protocol = no
+#max number of metrics to report in one go when using the pickle protocol.
+pickle_batch_size = 300
+
+#enabling debug mode and running in the foreground (with -f) is a great way
+#to debug an app generating new metrics
+debug = no
+
+#How often to flush stats to graphite
+flush_interval = 10
+#calculate the XXth percentile
+percent_threshold = 90
+
+# Override the key prefixes and suffixes - see:
+# https://github.com/etsy/statsd/blob/master/docs/namespacing.md
+legacy_namespace = true
+global_prefix = stats
+prefix_counter = counters
+prefix_timer = timers
+prefix_gauge = gauges

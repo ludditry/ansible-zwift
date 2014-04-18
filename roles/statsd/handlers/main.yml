@@ -1,3 +1,3 @@
 ---
-- name: restart statsd-c
-  service: name=statsd state=restarted
+- name: restart statsdpy
+  service: name=statsdpy state=restarted
