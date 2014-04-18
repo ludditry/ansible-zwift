@@ -50,7 +50,7 @@
   when: swift_manage_disks
 
 - name: drop a proper defaults/rsyncd
-  template: dest=/etc/default/rsyncd src=rsyncd.default.j2 mode=0644
+  template: dest=/etc/default/rsync src=rsync.default.j2 mode=0644
   notify: restart rsync
 
 - name: drop a proper rsyncd.conf
