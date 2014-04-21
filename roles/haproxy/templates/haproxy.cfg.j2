@@ -40,7 +40,7 @@ frontend https-in
          bind *:443 ssl crt /etc/haproxy/haproxy.pem
 
          acl is_swift_api url_beg /v1 /auth /open
-         acl is_auth_api url_beg /login
+         acl is_auth_api url_beg /login /profile
          use_backend auth if is_auth_api
          use_backend swift if is_swift_api
          use_backend other if !is_swift_api !is_auth_api
