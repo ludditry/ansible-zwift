@@ -3,7 +3,6 @@
   apt: pkg={{item}} state=present
   with_items:
     - memcached
-    - zerovm-zmq
 
 - include: source-install.yml
   when: swift_deployment_method|lower == "source"
