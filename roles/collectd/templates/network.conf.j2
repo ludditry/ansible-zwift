@@ -1,13 +1,13 @@
 {% if swift_collectd_host %}
 LoadPlugin network
 <Plugin network>
-       # client setup:
-       Server {{swift_collectd_ip}} "25826"
-
        # server setup:
        {% if swift_collectd_host == inventory_hostname %}
        Listen "{{swift_collectd_host_bind}}" "25826"
        TimeToLive 128
+       {% else %}
+       # client setup:
+       Server {{swift_collectd_ip}} "25826"
        {% endif %}
 
        # statistics about the network plugin itself
