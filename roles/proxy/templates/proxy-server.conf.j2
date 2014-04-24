@@ -106,15 +106,16 @@ oauth_provider = google_oauth
 
 [filter:litequota]
 use = egg:liteauth#litequota
-services_url = /v1/liteauth/services
-whitelist_url = /v1/liteauth/whitelist
+services_url = /v1/AUTH_.auth/services
+whitelist_url = /v1/AUTH_.auth/whitelist
 
 [filter:lite-swauth]
 use = egg:liteauth#liteswauth
-whitelist_url = /v1/liteauth/whitelist
-invite_url = /v1/liteauth/invites
+whitelist_url = /v1/AUTH_.auth/whitelist
+invite_url = /v1/AUTH_.auth/invites
 super_admin_key = {{swift_swauth_key}}
 cors_allow_origin = http://{{swift_swauth_auth_domain}}, http://{{swift_swauth_cluster_domain}}
+allow_passthrough = true
 
 [filter:oauth-login-g]
 use = egg:liteauth#oauthlogin
