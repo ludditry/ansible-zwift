@@ -25,6 +25,13 @@
   apt: pkg={{item}} state=present
   with_items: swift_proxy_extra_packages
 
+- name: Create zwift daemon config dir
+  file: path={{zwift_daemon_config_dir}} state=directory mode=0755
+
+- name: Drop daemon mode config (python.json)
+  copy: src={{item.name}}.json dest={{zwift_daemon_config_dir}}/{{item.name}}.json mode=644
+  with_items: zwift_daemons
+
 - name: drop a proper proxy-server.conf
   template: dest=/etc/swift/proxy-server.conf src=proxy-server.conf.j2 owner=swift group=swift mode=0644
   notify: restart proxy

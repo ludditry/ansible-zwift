@@ -1,0 +1,19 @@
+ [{
+     "exec": { 
+       "path":"file://python:python", 
+       "args": "/dev/input" 
+     },
+     "file_list": [
+       {
+         "device": "input",
+         "path": "swift://a/c/o"
+       },
+       {
+         "device": "stdout"
+       },
+       {
+        "device": "python"
+       }
+     ], 
+     "name": "python"
+ }]

@@ -91,6 +91,11 @@ swift_users:
   "reseller_admin": false
 
 #zwift sys image data
+zwift_daemon_config_dir: "/opt/zerovm/daemon"
+zwift_daemons:
+- "name": "python"
+  "id": "b290070e-a997-4343-b6c0-e7d279c71d67"
+
 zwift_sysimage_dir: "/opt/zerovm/sysimages"
 zwift_sysimages:
 - "name": "python"
