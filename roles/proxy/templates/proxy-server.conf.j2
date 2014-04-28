@@ -144,6 +144,8 @@ default_swift_cluster = {{swift_swauth_default_cluster}}
 use = egg:zerocloud#proxy_query
 zerovm_maxinput = 5368709120
 zerovm_maxoutput = 5368709120
+zerovm_network_type = {{swift_zerovm_network_type}}
+
 zerovm_daemons = {% for item in zwift_daemons %}
  {{ item.id }} {{zwift_daemon_config_dir}}/{{ item.name }}.json
 {%- endfor %}
@@ -151,7 +153,6 @@ zerovm_daemons = {% for item in zwift_daemons %}
 zerovm_sysimage_devices = {% for item in zwift_sysimages %}
  {{ item.name }} {{ zwift_sysimage_dir }}/{{ item.name }}.tar
 {%- endfor %}
-zerovm_network_type = {{swift_zerovm_network_type}}
 
 [pipeline:main]
 {% if swift_auth_type == 'tempauth' %}
