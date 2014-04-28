@@ -6,6 +6,10 @@ swift_statsd_host: "{{prefix}}-management"
 swift_statsd_net: "{{swift_nets['monitoring']}}"
 swift_statsd_ip: "{{lookup('hostip', 'host={{swift_statsd_host}} cidr={{swift_statsd_net}}')}}"
 
+# network style
+swift_zerovm_network_type: tcp
+
+
 # google auth
 google_auth_client_id: unspecified
 google_auth_client_secret: unspecified

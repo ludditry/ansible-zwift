@@ -1,0 +1,11 @@
+---
+- name: ensure cbundle prereqs
+  apt: pkg={{item}}
+  with_items:
+  - cbundler
+
+- name: pull proper cbundle
+  shell: cbundle install {{zerovm_source_deploy_site}}/{{zerovm_source_deploy_flavor}}/{{zerovm_source_deploy_flavor}}-{{zerovm_source_deploy_version}} creates=/opt/bundler/{{zerovm_source_deploy_flavor}}/{{zerovm_source_deploy_flavor}}-{{zerovm_source_deploy_version}}
+
+
+  

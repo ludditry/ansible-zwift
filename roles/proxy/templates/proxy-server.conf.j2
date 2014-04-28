@@ -151,6 +151,7 @@ zerovm_daemons = {% for item in zwift_daemons %}
 zerovm_sysimage_devices = {% for item in zwift_sysimages %}
  {{ item.name }} {{ zwift_sysimage_dir }}/{{ item.name }}.tar
 {%- endfor %}
+zerovm_network_type = {{swift_zerovm_network_type}}
 
 [pipeline:main]
 {% if swift_auth_type == 'tempauth' %}

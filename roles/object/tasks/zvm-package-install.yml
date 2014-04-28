@@ -1,0 +1,5 @@
+---
+- name: install zerovm packages
+  apt: pkg="{{item}}"
+  with_items:
+    - zerovm-zmq

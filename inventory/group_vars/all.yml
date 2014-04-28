@@ -21,6 +21,7 @@ swift_dsh_host: "{{prefix}}-management"
 swift_manage_rings: true
 swift_manage_disks: true
 swift_deployment_method: source
+zerovm_deployment_method: package
 
 # for ring creation
 swift_part_power: 10
@@ -31,7 +32,7 @@ swift_min_part_hours: 1
 swift_source_deploy_dir: /opt/swift
 swift_source_deploy_site: "http://zwift-ci.zerovm.org/stable"
 swift_source_deploy_version: "swift-00009"
-
+# zerovm_source_deploy_site: "http://zwift-ci.zerovm.org/
 # base repos
 swift_base_repos:
   "http://mirrors.kernel.org/ubuntu precise": ["main", "restricted", "universe"]
