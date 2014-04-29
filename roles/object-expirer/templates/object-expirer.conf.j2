@@ -20,6 +20,8 @@ conn_timeout = 2.5
 allow_account_management = false
 
 [filter:cache]
+memcache_serialization_support = 2
+memcache_servers = {{swift_memcache_list}}
 use = egg:swift#memcache
 
 [filter:catch_errors]
