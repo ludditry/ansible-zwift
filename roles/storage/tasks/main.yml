@@ -62,3 +62,6 @@
 
 - name: drop xfs corruption check cron
   template: dest=/etc/cron.d/corruption-check src=corruption-check.j2 mode=0644 owner=root
+
+- name: drop /srv swift ownership cron
+  cron: name="srv-chmod" minute="*/5" job="find /srv/node -maxdepth 1 -fstype xfs -print0 | xargs -n10 -0 sudo chown swift"
