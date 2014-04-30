@@ -32,6 +32,10 @@
   - {role: graphite}
   - {role: dispersion}
   - {role: object-expirer}
+  - role: ntp
+    "swift_ntp_servers": "{{swift_ntp_upstream_servers}}"
+    "swift_ntp_client_nets":
+      - "{{swift_nets['management']}}"
 
 # FIXME(rp): these dsh configuration should probably
 # be done serial: 1 so as not to race
@@ -58,6 +62,13 @@
   - role: dsh
     dsh_server: "{{swift_dsh_host}}"
     dsh_group: storage
+
+# Set up ntp
+- name: NTP Configuration
+  hosts: all:!management
+  roles:
+    - role: ntp
+      swift_ntp_servers: "{{swift_ntp_local_servers}}"
 
 # Set up syslog
 - name: syslog server

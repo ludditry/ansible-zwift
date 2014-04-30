@@ -1,0 +1,11 @@
+restrict default ignore
+restrict 127.0.0.1
+
+{% for net in swift_ntp_client_nets %}
+restrict {{net|net_from_netcidr}} mask {{net|netcidr_to_mask}} {{swift_ntp_client_restrictions}}
+{% endfor %}
+
+{% for srv in swift_ntp_servers %}
+restrict {{srv}} nomodify notrap noquery
+server {{srv}} {{swift_ntp_server_options}}
+{% endfor %}
