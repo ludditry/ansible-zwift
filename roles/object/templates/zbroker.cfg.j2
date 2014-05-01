@@ -1,0 +1,13 @@
+#   Apply to the whole broker
+server
+    timeout = {{swift_zbroker_client_timeout}}        #   Client connection timeout
+    background = 0      #   Run as background process
+    workdir = /         #   Working directory for daemon
+
+#   Apply to the zpipes server only
+zpipes_server
+    echo = binding zpipes service to 'ipc://@/zpipes/local'
+    bind
+        endpoint = ipc://@/zpipes/local
+
+
