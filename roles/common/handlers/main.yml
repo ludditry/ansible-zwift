@@ -4,3 +4,6 @@
 
 - name: fix venv permissions
   command: chown -R root:root {{swift_source_deploy_dir}}/{{swift_source_deploy_version}}
+
+- name: swift-init all restart
+  command: swift-init all restart

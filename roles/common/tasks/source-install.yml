@@ -16,15 +16,18 @@
 - name: install swift versioned tarball
   shell: curl -skS {{swift_source_deploy_site}}/{{swift_source_deploy_version}}.tar.gz | tar -C {{swift_source_deploy_dir}} -xvzf - creates={{swift_source_deploy_dir}}/{{swift_source_deploy_version}}
 
-- name: drop a symlink
-  file: dest={{swift_source_deploy_dir}}/current src={{swift_source_deploy_dir}}/{{swift_source_deploy_version}} state=link
-  notify:
-  - relink busybox
-  - fix venv permissions
-
 - name: fix the venv path
   lineinfile:
     dest: "{{swift_source_deploy_dir}}/{{swift_source_deploy_version}}/bin/activate"
     regexp: "^VIRTUAL_ENV=.*"
     line: 'VIRTUAL_ENV="{{swift_source_deploy_dir}}/{{swift_source_deploy_version}}"'
     state: present
+
+- name: drop a symlink
+  file: dest={{swift_source_deploy_dir}}/current src={{swift_source_deploy_dir}}/{{swift_source_deploy_version}} state=link
+  notify:
+  - relink busybox
+  - fix venv permissions
+  - swift-init all restart
+
+
