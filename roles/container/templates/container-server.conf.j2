@@ -60,5 +60,16 @@ recon_cache_path = /var/cache/swift
 recon_lock_path = /var/lock/swift
 use = egg:swift#recon
 
+[filter:object-query]
+use = egg:zerocloud#object_query
+zerovm_timeout = 360
+zerovm_maxpool = 1000
+zerovm_maxinput = 5368709120
+zerovm_maxoutput = 5368709120
+zerovm_sysimage_devices = {% for item in zwift_sysimages %}
+ {{ item.name }} {{ zwift_sysimage_dir }}/{{ item.name }}.tar
+{%- endfor %}
+
+
 [pipeline:main]
-pipeline = healthcheck recon container-server
+pipeline = healthcheck recon object-query container-server
