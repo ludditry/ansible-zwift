@@ -1,3 +1,6 @@
 ---
 - name: restart swift-object
   service: name=swift-object state=restarted
+
+- name: restart zbroker
+  service: name=zbroker state=restarted

@@ -7,5 +7,15 @@
 - name: pull proper cbundle
   shell: cbundle install {{zerovm_source_deploy_site}}/{{zerovm_source_deploy_flavor}}/{{zerovm_source_deploy_flavor}}-{{zerovm_source_deploy_version}} creates=/opt/bundler/{{zerovm_source_deploy_flavor}}/{{zerovm_source_deploy_flavor}}-{{zerovm_source_deploy_version}}
 
+# these can be dropped back in main config once a stable zbroker is packaged
+- name: drop a proper zbroker.cfg
+  template: src=zbroker.cfg.j2 dest=/etc/zbroker.cfg owner=root group=root mode=0644
+  notify: restart zbroker
+
+- name: ensure zbroker service is +x
+  file: path=/etc/init.d/zbroker owner=root mode=0755
+
+- name: ensure zbroker service autostarts
+  service: name=zbroker state=started enabled=yes
 
   

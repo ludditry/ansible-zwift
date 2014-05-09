@@ -65,6 +65,9 @@ zerovm_timeout = 360
 zerovm_maxpool = 1000
 zerovm_maxinput = 5368709120
 zerovm_maxoutput = 5368709120
+{% if swift_zerovm_objectquery_debug %}
+zerovm_debug = yes
+{% endif %}
 zerovm_sysimage_devices = {% for item in zwift_sysimages %}
  {{ item.name }} {{ zwift_sysimage_dir }}/{{ item.name }}.tar
 {%- endfor %}

@@ -2,3 +2,8 @@
 swift_statsd_host: "{{prefix}}-management"
 swift_statsd_net: "{{swift_nets['monitoring']}}"
 swift_statsd_ip: "{{lookup('hostip', 'host={{swift_statsd_host}} cidr={{swift_statsd_net}}')}}"
+
+swift_zerovm_objectquery_debug: false
+
+swift_zbroker_client_timeout: 10000
+
