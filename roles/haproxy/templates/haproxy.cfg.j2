@@ -38,10 +38,10 @@ defaults
 frontend https-in
          option http-server-close
          bind *:443 ssl crt /etc/haproxy/haproxy.pem
-
+         acl is_internal src {{swift_nets['management']}}
          acl is_swift_api url_beg /v1 /auth /open
          acl is_auth_api url_beg /login /profile
-         use_backend auth if is_auth_api
+         use_backend auth if is_auth_api or is_internal
          use_backend swift if is_swift_api
          use_backend other if !is_swift_api !is_auth_api
 
