@@ -1,0 +1,8 @@
+# {{ansible_managed}}
+
+if $programname == 'zpipes_server' then /var/log/zbroker.log
+{% if swift_syslog_role is not defined or swift_syslog_role != 'server' %}
+& @{{swift_syslog_ip}}
+{% endif %}
+&~
+
