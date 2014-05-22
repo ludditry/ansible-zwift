@@ -7,3 +7,5 @@
 
 - name: swift-init all restart
   command: swift-init all restart
+  ignore_errors: yes
+
