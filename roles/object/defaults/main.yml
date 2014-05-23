@@ -7,3 +7,6 @@ swift_zerovm_objectquery_debug: false
 
 swift_zbroker_client_timeout: 10000
 
+# default timeout slightly less than default proxy timeouts
+zerovm_timeout: 59
+
