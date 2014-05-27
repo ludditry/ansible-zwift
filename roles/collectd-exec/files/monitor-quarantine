@@ -1,0 +1,6 @@
+#!/bin/bash
+
+bads="$(sudo swift-recon -q | grep '^\[quar' | grep -v 'high: 0' | wc -l)"
+if [[ $bads -gt 0 ]]; then
+    echo PUTNOTIF host=$(hostname) type=swift type_instance=quarantine time=$(date +%s) message="There are items in quarantine!" severity=failure
+fi

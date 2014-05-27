@@ -1,0 +1,5 @@
+<Plugin exec>
+{% for item in swift_collectd_scripts %}
+  Exec "swiftops:swiftops" "{{swift_collectd_script_dir}}/{{item}}"
+{% endfor %}
+</Plugin>
