@@ -8,7 +8,12 @@ server
     # user = swift
     # group = swift
 
-#   Apply to the zpipes server only
+zyre
+    port = 5670
+    interval = 250
+    name = {{inventory_hostname}}
+    interface = {{swift_zbroker_interface}}
+
 zpipes_server
     echo = binding zpipes service to 'ipc://@/zpipes/local'
     bind

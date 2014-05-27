@@ -6,7 +6,9 @@ swift_statsd_ip: "{{lookup('hostip', 'host={{swift_statsd_host}} cidr={{swift_st
 swift_zerovm_objectquery_debug: false
 
 swift_zbroker_client_timeout: 10000
+swift_zbroker_interface: "{{lookup('hostif', swift_nets['swift'])}}"
 
 # default timeout slightly less than default proxy timeouts
 zerovm_timeout: 59
+
 
