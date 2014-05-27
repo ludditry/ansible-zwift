@@ -13,7 +13,7 @@
        version={{ zwift_ui_version }}
 
 - name: configure ui
-  template: src=config.js.j2 dest={{ zwift_ui_path }}/config.js owner=root group=root mode=0644
+  template: src=config.js.j2 dest={{ zwift_ui_path }}/js/config.js owner=root group=root mode=0644
 
 - name: symlink docroot
   file: src="{{ zwift_ui_docroot }}" dest="{{ zwift_apache_docroot }}" state=link
