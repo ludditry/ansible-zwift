@@ -1,3 +1,5 @@
 #!/bin/bash
 
-sudo swift-recon -u | grep '^Not mounted' | awk '{ printf("%s/%s umounted\n", $5, $3); }' | xargs -n1 -d\\n -i echo PUTNOTIF host=$(hostname) type=swift type_instance=umount time=$(date +%s) message=\"{}\" severity=failure
+sudo swift-recon -u | grep '^Not mounted' | awk '{ printf("%s/%s umounted\n", $5, $3); }' | xargs -n1 -d\\n -i echo PUTNOTIF host=$(hostname) time=$(date +%s) message=\"{}\" severity=failure
+
+sleep 3600

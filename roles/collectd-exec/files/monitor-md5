@@ -2,5 +2,7 @@
 
 bads="$(sudo swift-recon --md5 | grep "doesn't match on disk md5sum$" | wc -l)"
 if [[ $bads -gt 0 ]]; then
-    echo PUTNOTIF host=$(hostname) type=swift type_instance=ring-md5 time=$(date +%s) message="Ring md5 mismatch!" severity=failure
+    echo PUTNOTIF host=$(hostname) time=$(date +%s) message="Ring md5 mismatch!" severity=failure
 fi
+
+sleep 3600
