@@ -22,5 +22,11 @@
   template: dest=/etc/swift/object-server.conf src=object-server.conf.j2 owner=swift mode=0644
   notify: restart swift-object
 
+- name: create swift-recon directories
+  file: path={{item}} mode=0755 owner=swift group=swift state=directory
+  with_items:
+    - /var/cache/swift
+    - /var/lock/swift
+
 - name: start object-server
   service: name=swift-object enabled=yes state=started
