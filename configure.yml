@@ -232,3 +232,13 @@
       - monitor-quarantine
       - monitor-umount
     "swift_collectd_exec_conf": "collectd-management.conf"
+
+- name: general monitoring configuration
+  tags: monitoring
+  hosts: all
+  roles:
+  - role: collectd-exec
+    "swift_collectd_script_dir": "/usr/share/collectd-scripts"
+    "swift_collectd_scripts":
+      - monitor-hw
+    "swift_collectd_exec_conf": "collectd-all.conf"

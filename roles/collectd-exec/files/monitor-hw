@@ -1,0 +1,16 @@
+#!/bin/bash
+
+cache=/var/cache/monitoring/hw
+
+HW="$(sudo dmesg | grep '\[Hardware Error]')"
+
+sudo mkdir -p /var/cache/monitoring & >/dev/null
+if ! [[ -f "$cache" ]]; then
+    echo 0 > "$cache"
+fi
+
+if [[ "$HW" -gt "$(cat /var/cache/monitoring/hw)" ]]; then
+    echo PUTNOTIF host=$(hostname) time=$(date +%s) message=\"Hardware errors detected in host dmesg\" severity=failure
+fi
+
+echo "$HW" | sudo tee "$cache" & > /dev/null
