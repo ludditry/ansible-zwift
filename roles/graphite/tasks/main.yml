@@ -1,7 +1,7 @@
 ---
 - name: Ensure graphite packages
-  apt: pkg={{item}} state=present
   tags: monitoring
+  apt: pkg={{item}} state=present
   with_items:
     - apache2
     - libapache2-mod-wsgi
@@ -23,14 +23,19 @@
   template: dest=/etc/graphite/local_settings.py src=local_settings.py.j2 mode=0644
   notify: restart apache2
 
-- name: drop apache2 graphite config
-  tags: monitoring
-  template: dest=/etc/apache2/sites-available/graphite src=graphite.j2
-  notify: restart apache2
-
 - name: a2enmod wsgi
   tags: monitoring
   command: a2enmod wsgi creates=/etc/apache2/mods-enabled/wsgi.conf
+  notify: restart apache2
+
+- name: a2enmod headers
+  tags: monitoring
+  command: a2enmod headers creates=/etc/apache2/mods-available/headers.load
+  notify: restart apache2
+
+- name: drop apache2 graphite config
+  tags: monitoring
+  template: dest=/etc/apache2/sites-available/graphite src=graphite.j2
   notify: restart apache2
 
 - name: a2ensite graphite

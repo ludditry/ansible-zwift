@@ -10,6 +10,13 @@
                 SetHandler None
         </Location>
 
+        # cors it up
+        <Location "/">
+                  Header set Access-Control-Allow-Origin "*"
+                  Header set Access-Control-Allow-Methods "GET, OPTIONS"
+                  Header set Access-Control-Allow-Headers "origin, authorization, accept"
+        </Location>
+
         ErrorLog ${APACHE_LOG_DIR}/graphite-web_error.log
 
         # Possible values include: debug, info, notice, warn, error, crit,
