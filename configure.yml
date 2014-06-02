@@ -222,7 +222,7 @@
 
 - name: management monitoring configuration
   tags: monitoring
-  hosts: management
+  hosts: "{{swift_collectd_host}}"
   roles:
   - role: collectd-exec
     "swift_collectd_script_dir": "/usr/share/collectd-scripts"
