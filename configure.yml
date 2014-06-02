@@ -241,4 +241,5 @@
     "swift_collectd_script_dir": "/usr/share/collectd-scripts"
     "swift_collectd_scripts":
       - monitor-hw
+      - monitor-cpu-stats.py
     "swift_collectd_exec_conf": "collectd-all.conf"
