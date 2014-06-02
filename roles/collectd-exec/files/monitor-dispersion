@@ -4,11 +4,11 @@ CONTAINER_PERCENT=$(sudo swift-dispersion-report --container-only 2>/dev/null | 
 OBJECT_PERCENT=$(sudo swift-dispersion-report --object-only 2>/dev/null | grep "copies found" | cut -d' ' -f1)
 
 if [ "${CONTAINER_PERCENT}" != "100.00%" ]; then
-    echo PUTNOTIF host=$(hostname) time=$(date +%s) message="Container dispersion: ${CONTAINER_PERCENT}" severity=failure
+    echo PUTNOTIF host=$(hostname) time=$(date +%s) message=\"Container dispersion: ${CONTAINER_PERCENT}\" severity=failure
 fi
 
 if [ "${OBJECT_PERCENT}" != "100.00%" ]; then
-    echo PUTNOTIF host=$(hostname) time=$(date +%s) message="Object dispersion: ${OBJECT_PERCENT}" severity=failure
+    echo PUTNOTIF host=$(hostname) time=$(date +%s) message=\"Object dispersion: ${OBJECT_PERCENT}\" severity=failure
 fi
 
 sleep 3600
