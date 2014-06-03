@@ -11,4 +11,13 @@ if [ "${OBJECT_PERCENT}" != "100.00%" ]; then
     echo PUTNOTIF host=$(hostname) time=$(date +%s) message=\"Object dispersion: ${OBJECT_PERCENT}\" severity=failure
 fi
 
-sleep 3600
+echo PUTVAL "$(hostname)/swift-dispersion/gauge-container" interval=60 $(date +%s):$(echo ${CONTAINER_PERCENT} | sed -e s/%//)
+
+echo PUTVAL "$(hostname)/swift-dispersion/gauge-object" interval=60 $(date +%s):$(echo ${OBJECT_PERCENT} | sed -e s/%//)
+
+sleep 60
+
+
+
+
+

@@ -2,6 +2,7 @@
 
 import socket
 import time
+import sys
 
 interval = 10
 hostname = socket.gethostname()
@@ -51,6 +52,7 @@ if __name__ == '__main__':
         epoch = int(time.time())
         stats = get_stats()
         print_stats(last_stats, stats, interval, epoch)
+        sys.stdout.flush()
         last_stats = stats
 
         time.sleep(interval)
