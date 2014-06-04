@@ -7,3 +7,7 @@ swift_haproxy_stats_port: 8000
 swift_haproxy_stats_ip: 127.0.0.1
 swift_ui_role: proxy
 swift_haproxy_header_size: 8192   # haproxy default
+
+haproxy_timeout_server: 50000
+haproxy_timeout_client: 50000
+haproxy_timeout_connect: 5000

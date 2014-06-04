@@ -14,6 +14,7 @@ global
         # timeout tarpit
         # timeout tunnel
 
+
         chroot /var/lib/haproxy
         user haproxy
         group haproxy
@@ -24,9 +25,11 @@ defaults
         mode    http
         option  httplog
         option  dontlognull
-        contimeout 5000
-        clitimeout 50000
-        srvtimeout 50000
+
+        timeout connect {{haproxy_timeout_connect}}
+        timeout client {{haproxy_timeout_client}}
+        timeout server {{haproxy_timeout_server}}
+
         errorfile 400 /etc/haproxy/errors/400.http
         errorfile 403 /etc/haproxy/errors/403.http
         errorfile 408 /etc/haproxy/errors/408.http
