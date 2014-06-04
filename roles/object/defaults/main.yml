@@ -11,4 +11,6 @@ swift_zbroker_interface: "{{lookup('hostif', swift_nets['swift'])}}"
 # default timeout slightly less than default proxy timeouts
 zerovm_timeout: 59
 
+zerovm_threadpools: "default = WaitPool(10,3); cluster = PriorityPool(10,100);"
+
 

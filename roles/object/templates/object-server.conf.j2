@@ -62,7 +62,7 @@ slowdown = 0.01
 [filter:object-query]
 use = egg:zerocloud#object_query
 zerovm_timeout = {{zerovm_timeout}}
-zerovm_maxpool = 1000
+zerovm_threadpools = {{zerovm_threadpools}}
 zerovm_maxinput = 5368709120
 zerovm_maxoutput = 5368709120
 {% if swift_zerovm_objectquery_debug %}
