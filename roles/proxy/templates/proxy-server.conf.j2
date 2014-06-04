@@ -12,18 +12,20 @@ log_statsd_metric_prefix = {{ ansible_hostname }}
 log_statsd_port = 8125
 log_statsd_sample_rate_factor = 1.0
 workers = 12
+# node_timeout = {{swift_proxy_node_timeout}}
+# client_timeout = {{swift_proxy_client_timeout}}
 
 [app:proxy-server]
+use = egg:swift#proxy
 account_autocreate = true
 allow_account_management = {{swift_allow_account_management}}
-client_timeout = 60
 conn_timeout = 3.5
 error_suppression_interval = 60
 error_suppression_limit = 10
 log_facility = LOG_LOCAL0
-node_timeout = 60
 object_post_as_copy = true
-use = egg:swift#proxy
+client_timeout = {{swift_proxy_client_timeout}}
+node_timeout = {{swift_proxy_node_timeout}}
 
 [filter:account-quotas]
 use = egg:swift#account_quotas
@@ -142,6 +144,10 @@ default_swift_cluster = {{swift_swauth_default_cluster}}
 
 [filter:proxy-query]
 use = egg:zerocloud#proxy_query
+
+node_timeout = {{swift_proxy_node_timeout}}
+client_timeout = {{swift_proxy_client_timeout}}
+
 zerovm_maxinput = 5368709120
 zerovm_maxoutput = 5368709120
 zerovm_network_type = {{swift_zerovm_network_type}}
