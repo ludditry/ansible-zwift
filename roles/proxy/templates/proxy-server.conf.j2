@@ -166,9 +166,9 @@ zerovm_sysimage_devices = {% for item in zwift_sysimages %}
 
 [pipeline:main]
 {% if swift_auth_type == 'tempauth' %}
-pipeline = catch_errors proxy-logging healthcheck cache ratelimit tempauth proxy-logging proxy-query proxy-server
+pipeline = catch_errors proxy-logging healthcheck cache ratelimit tempauth proxy-logging proxy-query {% if swift_use_staticweb %}staticweb{% endif %} proxy-server
 {% elif swift_auth_type == 'liteauth' %}
-pipeline = catch_errors proxy-logging healthcheck cache ratelimit liteauth-token oauth-login-g lite-swauth swauth proxy-logging proxy-server
+pipeline = catch_errors proxy-logging healthcheck cache ratelimit liteauth-token oauth-login-g lite-swauth swauth proxy-logging {% if swift_use_staticweb %}staticweb{% endif %} proxy-server
 {% elif swift_auth_type == 'swauth' %}
-pipeline = catch_errors proxy-logging healthcheck cache ratelimit liteauth-token swauth proxy-logging proxy-query proxy-server
+pipeline = catch_errors proxy-logging healthcheck cache ratelimit liteauth-token swauth proxy-logging proxy-query {% if swift_use_staticweb %}staticweb{% endif %} proxy-server
 {% endif %}
