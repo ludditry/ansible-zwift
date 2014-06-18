@@ -101,6 +101,8 @@ zwift_sysimage_dir: "/opt/zerovm/sysimages"
 zwift_sysimages:
 - "name": "python"
   "url": "http://packages.zerovm.org/zerovm-samples/python.tar"
+- "name": "python2.7"
+  "url": "http://packages.zerovm.org/zerovm-samples/python.tar"
 
 #
 # Monitoring config

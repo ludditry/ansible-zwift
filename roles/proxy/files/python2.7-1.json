@@ -1,0 +1,23 @@
+ [{
+     "exec": { 
+       "path":"file://python2.7:python", 
+       "args": "-" 
+     },
+     "devices": [
+       {
+         "name": "input",
+         "path": "swift://a/c/o"
+       },
+       {
+         "name": "stdin",
+         "path": "swift://a/c/o"
+       },
+       {
+         "device": "stdout"
+       },
+       {
+        "device": "python2.7"
+       }
+     ], 
+     "name": "python2.7-1"
+ }]
