@@ -44,6 +44,8 @@ frontend https-in
          acl is_internal src {{swift_nets['management']}}
          acl is_swift_api url_beg /v1 /auth /open
          acl is_auth_api url_beg /login /profile
+         acl is_nexe_request hdr_cnt(x-zerovm-execute) 1
+         use_backend swift if is_nexe_request
          use_backend auth if is_auth_api or is_internal
          use_backend swift if is_swift_api
          use_backend other if !is_swift_api !is_auth_api
