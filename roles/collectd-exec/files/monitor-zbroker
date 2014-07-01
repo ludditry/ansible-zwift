@@ -1,0 +1,177 @@
+#!/usr/bin/env python
+
+import traceback
+import hashlib
+import requests
+import getopt
+import sys
+import yaml
+import json
+import os
+import socket
+import time
+
+
+def reducer_program(reducer_file=None):
+    reducer_program = """
+import sys
+import os
+
+for filename in os.listdir('/dev/in'):
+    with open(os.path.join('/dev/in', filename), 'r') as f:
+        f.read()
+
+sys.stdout.write('Ok')
+"""
+
+    if reducer_file is not None:
+        with open(reducer_file, 'r') as f:
+            reducer_program = f.read()
+
+    return reducer_program
+
+
+def mapper_program(mapper_file=None):
+    mapper_program = """
+with open('/dev/out/reducer', 'a') as f:
+    f.write('test')
+"""
+
+    if mapper_file is not None:
+        with open(mapper_file, 'r') as f:
+            mapper_program = f.read()
+
+    return mapper_program
+
+
+def maybe_upload_file(endpoint, token, container, object, data):
+    must_upload = True
+
+    # see if an object exists
+    resp=requests.head('%s/%s/%s' % (endpoint, container, object),
+                       headers={'X-Auth-Token': token})
+
+    if resp.status_code == 200:
+        old_etag = resp.headers.get('etag', None)
+        new_etag = hashlib.md5(data).hexdigest()
+
+        if old_etag == new_etag:
+            must_upload = False
+        
+    if must_upload:
+        # make sure the container exists
+        requests.put('%s/%s' % (endpoint, container),
+                     headers={'X-Auth-Token': token})
+
+        # put the thing in there
+        requests.put('%s/%s/%s' % (endpoint, container, object),
+                     headers={'X-Auth-Token': token},
+                     data=data)
+
+
+def job_execute(endpoint, token, manifest):
+    return requests.post(
+        endpoint,
+        headers={
+            'X-Auth-Token': token,
+            'Content-Type': 'application/json',
+            'X-ZeroVM-Execute': '1.0'},
+        data=manifest)
+
+
+def auth_v1(user, auth, key):
+    if not (user and auth and key):
+        print 'must supply ST_USER, ST_AUTH and ST_KEY env vars or config values'
+        sys.exit(1)
+
+    res = requests.get(auth, headers={'x-storage-user': user,
+                                      'x-storage-pass': key})
+
+    return(res.headers.get('x-storage-url', None),
+           res.headers.get('x-auth-token', None))
+
+
+def make_manifest(container, file_glob, scripts_container='scripts', 
+                  mapper='mapper.py', reducer='reducer.py'):
+    return json.dumps(
+        [{'name': 'mapper',
+          'exec': { 'path': 'file://python:python' },
+          'devices': [
+              {'name': 'stdin',
+               'path': 'swift://./%s/%s' % (scripts_container, mapper)},
+              {'name': 'input',
+               'path': 'swift://./%s/%s' % (container, file_glob)},
+              {'name': 'python'}],
+          'connect': ['reducer']},
+         {'name': 'reducer',
+          'exec': { 'path': 'file://python:python' },
+          'devices': [
+              {'name': 'stdin',
+               'path': 'swift://./%s/%s' % (scripts_container, reducer)},
+              {'name': 'stdout'},
+              {'name': 'python'}]}], indent=4)
+
+                    
+def run_test_job(endpoint, token, container, file_glob):
+    pass
+
+
+def main():
+    configfile = '/etc/zbroker_test.conf'
+
+    try:
+        opts, args = getopt.getopt(sys.argv[1:], "c:")
+    except getopt.GetoptError as e:
+        print str(e)
+        sys.exit(1)
+
+    for o, a in opts:
+        if o == '-c':
+            configfile = a
+        else:
+            sys.exit(1)
+
+    failed = True
+
+    try:
+        with open(configfile, 'r') as f:
+            config = yaml.load(f)
+
+        user = config.get('auth_user', os.getenv('ST_USER', None))
+        auth = config.get('auth_url', os.getenv('ST_AUTH', None))
+        key = config.get('auth_key', os.getenv('ST_KEY', None))
+
+        (endpoint, token) = auth_v1(user, auth, key)
+    
+        script_container = config.get('script_container', 'scripts')
+        mapper_data = mapper_program(config.get('mapper_script', None))
+        reducer_data = reducer_program(config.get('reducer_script', None))
+    
+        maybe_upload_file(endpoint, token, script_container, 'mapper.py', mapper_data)
+        maybe_upload_file(endpoint, token, script_container, 'reducer.py', reducer_data)
+    
+        object_container = config['object_container']
+        object_match = config['object_match']
+    
+        manifest = make_manifest(object_container, object_match, script_container)
+    
+        maybe_upload_file(endpoint, token, script_container, 'test.json', manifest)
+    
+        res = job_execute(endpoint, token, manifest)
+    
+        if res.content == 'Ok':
+            failed = False
+    except:
+        with open('/tmp/zbroker_test.error', 'w') as f:
+            traceback.print_exc(None, f)
+
+    if failed:
+        sys.stdout.write('PUTNOTIF message="zbroker failure" severity=failure time=%d host=%s\n' % (
+            int(time.time()), socket.gethostname()))
+        sys.stdout.flush()
+
+if __name__ == "__main__":
+    while True:
+        main()
+        time.sleep(120)
+

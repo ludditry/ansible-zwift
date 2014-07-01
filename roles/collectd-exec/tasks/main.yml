@@ -1,6 +1,18 @@
 ---
+# required for monitor-zbroker
+- name: install python pre-reqs
+  apt: pkg={{item}} state=present
+  when: inventory_hostname == swift_collectd_host
+  with_items:
+    - python-yaml
+    - python-requests
+
 - name: Create collectd script directory
   file: path="{{swift_collectd_script_dir}}" owner=root mode=0755 state=directory
+
+- name: add zbroker test conf
+  template: dest=/etc/zbroker_test.conf src=zbroker_test.conf.j2 owner=swiftops mode=0600
+  notify: restart collectd
 
 - name: Drop monitoring scripts
   copy: dest="{{swift_collectd_script_dir}}/{{item}}" src={{item}} owner=root mode=0755
@@ -9,4 +21,3 @@
 - name: Configure monitoring scripts
   template: dest=/etc/collectd/conf.d/{{swift_collectd_exec_conf}} src=exec.conf.j2 owner=root mode=644
   notify: restart collectd
-

@@ -231,6 +231,7 @@
       - monitor-md5
       - monitor-quarantine
       - monitor-umount
+      - monitor-zbroker
     "swift_collectd_exec_conf": "collectd-management.conf"
 
 - name: general monitoring configuration

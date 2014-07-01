@@ -1,0 +1,27 @@
+# AUTH INFO
+# Use ST_ env variables by default, unless auth info is specified
+# auth_url: http://127.0.0.1:8080/auth/v1.0
+# auth_user: tenant:user
+# auth_key: secretkey
+#
+auth_url: https://{{swift_swauth_cluster_domain}}/auth/v1.0
+auth_user: {{swift_dispersion_tenant}}:{{swift_dispersion_user}}
+auth_key: {{swift_dispersion_key}}
+
+# Configs for objects to be mapped
+object_container: dispersion_objects
+object_match: "dispersion_1*"
+
+# mapper and reducer scripts, defaults to simple
+# no-op mapper and reducer, sufficient to test pipes
+#
+# script_container: scripts
+# mapper_script: /path/to/mapper_script.py
+# reducer_script: /path/to/reducer_script.py
+#
+# If the mapper and reducer scripts are not present in the
+# script container, they will be uploaded to the script
+# container
+#
+
+
