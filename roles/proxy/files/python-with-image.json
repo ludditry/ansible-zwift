@@ -1,0 +1,33 @@
+ [{
+     "exec": { 
+       "path":"file://python:python", 
+       "args": "" 
+     },
+     "file_list": [
+         {
+             "device": "input",
+             "path": "swift://a/c/o"
+         },
+         {
+             "device": "stdout",
+             "content_type": "text/html"
+         },
+         {
+             "device": "stdin",
+             "path": "swift://a/c/o"
+         },
+         {
+             "device": "stderr",
+             "path": "swift://a/c/o"
+             "content_type": "text/plain"
+         },
+         {
+             "device": "image",
+             "path": "swift://a/c/o",
+         },
+         {
+             "device": "python"
+         }
+     ], 
+     "name": "python-with-image"
+ }]

@@ -1,0 +1,22 @@
+#!/bin/bash
+
+INTERVAL=600
+DISKS="/srv/node"
+#DISKS="/.*"
+
+while read total avail disk; do
+    percent=$(( (total - avail) * 100 / total ))
+
+    disk_display=$(echo ${disk} | sed s#^/## | tr '/' '_')
+    if [ "${disk_display}" = "" ]; then
+        disk_display="root"
+    fi
+
+    if [ ${percent} -gt 85 ]; then
+        echo PUTNOTIF host=$(hostname -s) time=$(date +%s) message=\"Low Disk space on ${disk}\" severity=failure
+    fi
+
+    echo PUTVAL "$(hostname)/storagedf-${disk_display}/gauge-used" interval=${INTERVAL} $(date +%s):$(echo "${percent}")
+done < <(df | grep "${DISKS}" | awk '{ print $2, $4, $6 }')
+
+sleep ${INTERVAL}

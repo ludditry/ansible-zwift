@@ -243,4 +243,5 @@
     "swift_collectd_scripts":
       - monitor-hw
       - monitor-cpu-stats.py
+      - monitor-diskutil
     "swift_collectd_exec_conf": "collectd-all.conf"
