@@ -6,7 +6,7 @@
   file: path=/etc/swift owner=swift group=swift mode=755 state=directory
 
 - name: drop swift.conf
-  template: src=swift.conf.j2 dest=/etc/swift/swift.conf owner=swift group=swift mode=0600
+  template: src=swift.conf.j2 dest=/etc/swift/swift.conf owner=swift group=swiftops mode=0640
 
 - name: Ensure common extra packages
   apt: pkg={{item}} state=present

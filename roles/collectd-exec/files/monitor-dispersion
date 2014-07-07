@@ -1,19 +1,34 @@
 #!/bin/bash
 
-CONTAINER_PERCENT=$(sudo swift-dispersion-report --container-only 2>/dev/null | grep "copies found" | cut -d' ' -f1)
-OBJECT_PERCENT=$(sudo swift-dispersion-report --object-only 2>/dev/null | grep "copies found" | cut -d' ' -f1)
+TMPFILE=$(mktemp)
 
-if [ "${CONTAINER_PERCENT}" != "100.00%" ]; then
-    echo PUTNOTIF host=$(hostname) time=$(date +%s) message=\"Container dispersion: ${CONTAINER_PERCENT}\" severity=failure
+echo $(date) > ${TMPFILE}
+
+container_data=$(swift-dispersion-report --container-only) 2>> ${TMPFILE}
+echo "Container run: $?" >> ${TMPFILE}
+echo "${container_data}" >> ${TMPFILE}
+
+object_data=$(swift-dispersion-report --object-only) 2>> ${TMPFILE}
+echo "Object run: $?" >> ${TMPFILE}
+echo "${object_data}" >> ${TMPFILE}
+
+CONTAINER_PERCENT=$(echo "${container_data}" | grep "copies found" | cut -d' ' -f1)
+OBJECT_PERCENT=$(echo "${object_data}" | grep "copies found" | cut -d' ' -f1)
+
+if [ "${CONTAINER_PERCENT}" != "" ] && [ "${OBJECT_PERCENT}" != "" ]; then
+    if [ "${CONTAINER_PERCENT}" != "100.00%" ]; then
+        echo PUTNOTIF host=$(hostname) time=$(date +%s) message=\"Container dispersion: ${CONTAINER_PERCENT}\" severity=failure
+    fi
+    
+    if [ "${OBJECT_PERCENT}" != "100.00%" ]; then
+        echo PUTNOTIF host=$(hostname) time=$(date +%s) message=\"Object dispersion: ${OBJECT_PERCENT}\" severity=failure
+    fi
+    
+    echo PUTVAL "$(hostname)/swift-dispersion/gauge-container" interval=60 $(date +%s):$(echo ${CONTAINER_PERCENT} | sed -e s/%//)
+    echo PUTVAL "$(hostname)/swift-dispersion/gauge-object" interval=60 $(date +%s):$(echo ${OBJECT_PERCENT} | sed -e s/%//)
+else
+    mv ${TMPFILE} /tmp/dispersion-error-$(date +%s)
 fi
-
-if [ "${OBJECT_PERCENT}" != "100.00%" ]; then
-    echo PUTNOTIF host=$(hostname) time=$(date +%s) message=\"Object dispersion: ${OBJECT_PERCENT}\" severity=failure
-fi
-
-echo PUTVAL "$(hostname)/swift-dispersion/gauge-container" interval=60 $(date +%s):$(echo ${CONTAINER_PERCENT} | sed -e s/%//)
-
-echo PUTVAL "$(hostname)/swift-dispersion/gauge-object" interval=60 $(date +%s):$(echo ${OBJECT_PERCENT} | sed -e s/%//)
 
 sleep 60
 
