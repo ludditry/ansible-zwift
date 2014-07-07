@@ -4,3 +4,6 @@
 
 - name: restart rsyslog
   service: name=rsyslog state=restarted
+
+- name: reload iptables
+  command: /etc/init.d/iptables-persistent reload

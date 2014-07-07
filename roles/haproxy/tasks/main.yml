@@ -3,6 +3,7 @@
   apt: pkg={{item}}
   with_items:
   - haproxy
+  - iptables-persistent
 
 - name: drop syslog config for haproxy
   template: src=rsyslog-haproxy.conf.j2 dest=/etc/rsyslog.d/haproxy.conf owner=root mode=0644
@@ -21,3 +22,16 @@
 
 - name: ensure haproxy startup
   service: name=haproxy state=started enabled=yes
+
+- name: drop ipv4 rules
+  copy: src=rules.v4 dest=/etc/iptables/rules.v4 owner=root mode=0600
+  when: swift_manage_lb_iptables == True
+  notify:
+  - reload iptables
+
+- name: drop ipv6 rules
+  copy: src=rules.v6 dest=/etc/iptables/rules.v6 owner=root mode=0600
+  when: swift_manage_lb_iptables == True
+  notify:
+  - reload iptables
+

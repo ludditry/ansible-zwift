@@ -38,8 +38,15 @@ defaults
         errorfile 503 /etc/haproxy/errors/503.http
         errorfile 504 /etc/haproxy/errors/504.http
 
+frontend http-in
+         mode http
+         option http-server-close
+         bind *:80
+         redirect scheme https code 301
+
 frontend https-in
          option http-server-close
+         redirect scheme https if !{ ssl_fc }
          bind *:443 ssl crt /etc/haproxy/haproxy.pem
          acl is_internal src {{swift_nets['management']}}
          acl is_swift_api url_beg /v1 /auth /open
