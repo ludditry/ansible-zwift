@@ -11,7 +11,7 @@ log_statsd_host = {{ swift_statsd_ip }}
 log_statsd_metric_prefix = {{ ansible_hostname }}
 log_statsd_port = 8125
 log_statsd_sample_rate_factor = 1.0
-workers = 12
+workers = {{ ansible_processor_cores }}
 # node_timeout = {{swift_proxy_node_timeout}}
 # client_timeout = {{swift_proxy_client_timeout}}
 

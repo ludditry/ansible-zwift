@@ -16,7 +16,7 @@ log_statsd_port = 8125
 log_statsd_sample_rate_factor = 1.0
 swift_dir = /etc/swift
 user = swift
-workers = 8
+workers = {{ ansible_processor_cores }}
 
 [app:object-server]
 conn_timeout = 0.5
@@ -24,6 +24,8 @@ log_facility = LOG_LOCAL1
 mb_per_sync = 64
 node_timeout = 3
 use = egg:swift#object
+# this might be better tuning metric than DEFAULT/workers
+# threads_per_disk = 4
 
 [filter:healthcheck]
 use = egg:swift#healthcheck

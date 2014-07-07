@@ -17,7 +17,7 @@ log_statsd_port = 8125
 log_statsd_sample_rate_factor = 1.0
 swift_dir = /etc/swift
 user = swift
-workers = 6
+workers = {{ ansible_processor_cores }}
 
 [app:container-server]
 allow_versions = true
