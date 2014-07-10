@@ -1,0 +1,13 @@
+---
+- name: Test confirmation
+  hosts: all
+  gather_facts: false
+  tasks:
+  - name: do check
+    fail: msg="you must set up a cluster yml file with cluster_confirm = prefix"
+    when: prefix != cluster_confirm
+
+- name: configure ecmp
+  hosts: lb
+  roles:
+    - ecmp

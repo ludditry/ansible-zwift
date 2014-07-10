@@ -1,5 +1,8 @@
 ---
-ecmp_advertise_network: 127.0.0.0/8
-ecmp_advertise_interface: eth0
-ecmp_area: 0.0.0.0
+ecmp_advertise_networks: ["127.0.0.0/8"]
+ecmp_advertise_interfaces: [eth6, eth7]
+ecmp_vip_interface: lo
+ecmp_ospf_area: 0
 ecmp_ip: 127.0.0.2
+ecmp_digest_key: yourkey
+ecmp_ospf_type: stub

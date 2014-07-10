@@ -1,5 +1,26 @@
 router ospf
+ router-id {{ansible_ssh_host}}
+ ospf abr-type cisco
  redistribute connected
- network {{ecmp_advertise_network}} area {{ecmp_area}}
+ log-adjacency-changes detail
+ area {{ecmp_ospf_area}} {{ecmp_ospf_type}}
+ area {{ecmp_ospf_area}} authentication message-digest
+ {% for network in ecmp_advertise_networks %}
+ network {{network}} area {{ecmp_ospf_area}}
+ {% endfor %}
+ distribute-list vips out kernel
+ distribute-list vips out connected
+ distribute-list vips out static
 
-ip forwarding
+
+{% for interface in ecmp_advertise_interfaces %}
+interface {{interface}}
+ ip ospf network point-to-point
+ ip ospf priority 0
+ ip ospf message-digest-key 5 md5 {{ecmp_digest_key}}
+{% endfor %}
+
+access-list vips permit {{ecmp_ip}}/32
+access-list vips deny any
+
+log file /var/log/quagga/ospfd.log

@@ -14,11 +14,11 @@
 
 - name: drop quagga ospfd config
   template: src=ospfd.conf.j2 dest=/etc/quagga/ospfd.conf owner=quagga group=quagga mode=0640
-  trigger: restart quagga
+  notify: restart quagga
 
-- name: ensure quagga running
-  service: name=quagga enabled=yes state=started
+#- name: ensure quagga running
+#  service: name=quagga enabled=yes state=started
 
 - name: add ecmp ip
-  tempate: src=ecmpiface.j2 dest=/etc/network/if-up.d/ecmpiface owner=root mode=0755
+  template: src=ecmpiface.j2 dest=/etc/network/if-up.d/ecmpiface owner=root mode=0755
   notify: apply ecmp ip

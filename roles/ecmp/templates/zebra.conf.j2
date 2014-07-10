@@ -1,4 +1,8 @@
-interface {{ecmp_advertise_interface}}
- ip ospf priority 0
- ipv6 nd suppres-ra
+{% for interface in ecmp_advertise_interfaces %}
+interface {{interface}}
+ ipv6 nd suppress-ra
  link-detect
+{% endfor %}
+
+ip forwarding
+log file /var/log/quagga/quagga.log
