@@ -13,7 +13,7 @@ def get_stats():
 
     with open('/proc/stat', 'r') as fd:
         stats = fd.read().split('\n')
-    
+
     stat_dict = {}
 
     for stat in stats:
@@ -56,4 +56,3 @@ if __name__ == '__main__':
         last_stats = stats
 
         time.sleep(interval)
-

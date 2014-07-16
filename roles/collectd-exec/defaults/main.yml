@@ -2,3 +2,4 @@
 swift_collectd_script_dir: "/usr/share/collectd-scripts"
 swift_collectd_scripts: []
 swift_collectd_exec_conf: "collectd-management.conf"
+swift_alert_method: "collectd"

@@ -1,11 +1,20 @@
 ---
 # required for monitor-zbroker
-- name: install python pre-reqs
+- name: install python pre-reqs for monitor hosts
   apt: pkg={{item}} state=present
   when: inventory_hostname == swift_collectd_host
   with_items:
     - python-yaml
     - python-requests
+    - python-alerter
+
+- name: install python pre-reqs for all hosts
+  apt: pkg={{item}} state=present
+  with_items:
+    - python-alerter
+
+- name: drop alerter config
+  template: dest=/etc/alerter.conf src=alerter.conf.j2 owner=swiftops mode=0600
 
 - name: Create collectd script directory
   file: path="{{swift_collectd_script_dir}}" owner=root mode=0755 state=directory

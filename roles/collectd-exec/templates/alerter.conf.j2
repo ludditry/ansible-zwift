@@ -1,0 +1,16 @@
+[DEFAULT]
+{% if swift_alert_method == 'pagerduty' %}
+pagerduty_domain = {{swift_pagerduty_domain}}
+service_key = {{swift_pagerduty_service_key}}
+alerter = pagerduty
+{% else %}
+alerter = collectd
+{% endif %}
+
+[monitor-diskutil]
+mount_path = /srv/node
+alert_threshold = 80
+interval = 600
+
+[monitor-dispersion]
+interval = 300

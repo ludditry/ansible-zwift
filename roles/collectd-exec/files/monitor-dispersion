@@ -1,38 +1,55 @@
-#!/bin/bash
+#!/usr/bin/env python
 
-TMPFILE=$(mktemp)
+import alerter
+import os
+import re
+import subprocess
+import socket
+import time
 
-echo $(date) > ${TMPFILE}
+CONF = alerter.config.CONF
+LOG = alerter.log.LOG
+ALERTER = alerter.alert.ALERTER
 
-container_data=$(swift-dispersion-report --container-only) 2>> ${TMPFILE}
-echo "Container run: $?" >> ${TMPFILE}
-echo "${container_data}" >> ${TMPFILE}
 
-object_data=$(swift-dispersion-report --object-only) 2>> ${TMPFILE}
-echo "Object run: $?" >> ${TMPFILE}
-echo "${object_data}" >> ${TMPFILE}
-
-CONTAINER_PERCENT=$(echo "${container_data}" | grep "copies found" | cut -d' ' -f1)
-OBJECT_PERCENT=$(echo "${object_data}" | grep "copies found" | cut -d' ' -f1)
-
-if [ "${CONTAINER_PERCENT}" != "" ] && [ "${OBJECT_PERCENT}" != "" ]; then
-    if [ "${CONTAINER_PERCENT}" != "100.00%" ]; then
-        echo PUTNOTIF host=$(hostname) time=$(date +%s) message=\"Container dispersion: ${CONTAINER_PERCENT}\" severity=failure
-    fi
+def get_dispersion():
+    devnull = open(os.devnull, 'w')
+    obj_dispersion = 100.0
+    con_dispersion = 100.0
     
-    if [ "${OBJECT_PERCENT}" != "100.00%" ]; then
-        echo PUTNOTIF host=$(hostname) time=$(date +%s) message=\"Object dispersion: ${OBJECT_PERCENT}\" severity=failure
-    fi
-    
-    echo PUTVAL "$(hostname)/swift-dispersion/gauge-container" interval=60 $(date +%s):$(echo ${CONTAINER_PERCENT} | sed -e s/%//)
-    echo PUTVAL "$(hostname)/swift-dispersion/gauge-object" interval=60 $(date +%s):$(echo ${OBJECT_PERCENT} | sed -e s/%//)
-else
-    mv ${TMPFILE} /tmp/dispersion-error-$(date +%s)
-fi
+    for line in subprocess.check_output(['swift-dispersion-report'], stderr=devnull).split('\n'):
+        matchdata = re.match('^([0-9\.]+)% of container.*$', line)
+        if matchdata:
+            con_dispersion = int(float(matchdata.group(1)))
 
-sleep 60
+        matchdata = re.match('^([0-9\.]+)% of object.*$', line)
+        if matchdata:
+            obj_dispersion = int(float(matchdata.group(1)))
+
+    return obj_dispersion, con_dispersion
+
+try:
+    host = socket.gethostname()
+    interval = CONF.get('interval', 300)
+
+    o, c = get_dispersion()
+
+    print 'PUTVAL "%s/swift-dispersion/gauge-container" interval=%d %d:%d' % (
+        host, interval, int(time.time()), c)
+
+    print 'PUTVAL "%s/swift-dispersion/gauge-object" interval=%d %d:%d' % (
+        host, interval, int(time.time()), o)
+
+    if o != 100 or c != 100:
+        ALERTER.failure('dispersion', 'dispersion failure', description='low dispersion: %d%%/%d%%' % (o, c))
+except Exception as e:
+    ALERTER.failure('dispersion', 'dispersion monitor exploded',
+                    description='Monitoring script died: %s' % str(e))
+
+time.sleep(interval)
 
 
+            
+            
 
-
-
+ 

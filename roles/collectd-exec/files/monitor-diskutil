@@ -1,22 +1,64 @@
-#!/bin/bash
+#!/usr/bin/env python
 
-INTERVAL=600
-DISKS="/srv/node"
-#DISKS="/.*"
+import subprocess
+import alerter
+import re
+import os
+import socket
+import time
 
-while read total avail disk; do
-    percent=$(( (total - avail) * 100 / total ))
+CONF=alerter.config.CONF
+LOG=alerter.log.LOG
+ALERTER=alerter.alert.ALERTER
 
-    disk_display=$(echo ${disk} | sed s#^/## | tr '/' '_')
-    if [ "${disk_display}" = "" ]; then
-        disk_display="root"
-    fi
+def find_monitored_disks(mount_path):
+    mounts = {}
+    unmounts = []
 
-    if [ ${percent} -gt 85 ]; then
-        echo PUTNOTIF host=$(hostname -s) time=$(date +%s) message=\"Low Disk space on ${disk}\" severity=failure
-    fi
+    if not os.path.isdir(mount_path):
+        return mounts, unmounts
 
-    echo PUTVAL "$(hostname)/storagedf-${disk_display}/gauge-used" interval=${INTERVAL} $(date +%s):$(echo "${percent}")
-done < <(df | grep "${DISKS}" | awk '{ print $2, $4, $6 }')
+    for line in subprocess.check_output(['mount', '-l']).split('\n'):
+        disk_ary = line.split()
+        if len(disk_ary) > 2:
+            # mountpoint => device
+            if disk_ary[2].startswith(mount_path):
+                mounts[disk_ary[2]] = disk_ary[0]
 
-sleep ${INTERVAL}
+
+    for file in os.listdir(mount_path):
+        fullpath = os.path.join(mount_path, file)
+
+        if os.path.isdir(fullpath) and not file.startswith('.'):
+            # we will consider this a mountpoint
+            if not fullpath in mounts:
+                unmounts.append(fullpath)
+
+    return mounts, unmounts
+
+def get_utilization(disk):
+    svfs = os.statvfs(disk)
+    percent = int(100 - (svfs.f_bfree * 100 / svfs.f_blocks))
+    LOG.debug('disk %s: %d%%' % (disk, percent))
+    return percent
+
+
+mount_path = CONF.get('mount_path', '/srv/node')
+disk_alert_threshold = CONF.get('alert_threshold', 80)
+interval = CONF.get('interval', 600)
+
+mounts, unmounts = find_monitored_disks(mount_path)
+
+host = socket.gethostname()
+
+for disk in unmounts:
+    LOG.error('Disk %s is unmounted' % disk)
+    ALERTER.failure(disk, 'unmounted device', description='host %s: device %s unmounted' % (host, disk))
+
+for disk in mounts:
+    percent_used = get_utilization(disk)
+    if percent_used > disk_alert_threshold:
+        LOG.error('host %s: Disk %s is over %d%% utilization' % (host, disk, disk_alert_threshold))
+        ALERTER.failure(disk, 'high utilization', description='host %s: device %s utilization at %d%%' % (host, disk, disk_alert_threshold))
+
+time.sleep(interval)
