@@ -85,7 +85,7 @@ def remove_from_pool():
 
 
 def main():
-    interval = CONF.get("interval", 1)
+    interval = CONF.get("interval", 10)
     while True:
         try:
             if check_haproxy():
