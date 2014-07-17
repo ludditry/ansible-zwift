@@ -10,6 +10,7 @@ ALERTER = alerter.alert.ALERTER
 HOSTNAME = socket.gethostname()
 SOCKET_PATH = "/var/run/haproxy.sock"
 
+
 def get_stats():
     sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
     stats = ""
@@ -22,6 +23,7 @@ def get_stats():
             break
     return parse_stats_string(stats)
 
+
 def parse_stats_string(s):
     stat_lines = s.strip().split("\n")
     fields = stat_lines[0]
@@ -29,14 +31,17 @@ def parse_stats_string(s):
     fields = fields.strip("#").strip(",").strip().split(",")
     return [dict(zip(fields, line.split(",")))
             for line in stat_lines]
-    
+
+
 def get_down_backends(parsed_stats):
     return [x for x in parsed_stats if x["svname"] == "BACKEND"
             and x["status"] != "UP"]
 
+
 def get_up_backends(parsed_stats):
     return [x for x in parsed_stats if x["svname"] == "BACKEND"
             and x["status"] == "UP"]
+
 
 def check_haproxy():
     try:
@@ -70,11 +75,14 @@ def check_haproxy():
         return False
     return True
 
+
 def add_to_pool():
     pass
 
+
 def remove_from_pool():
     pass
+
 
 def main():
     interval = CONF.get("interval", 1)
@@ -97,6 +105,7 @@ def main():
                 HOSTNAME,
                 description="haproxy monitoring unexpectedly excepted: %s" % (
                     msg))
+
 
 if __name__ == "__main__":
     main()
