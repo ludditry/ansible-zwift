@@ -21,9 +21,14 @@
 - name: Set up base package repos
   template: dest=/etc/apt/sources.list src=sources.list.j2 owner=root group=root mode=0644
 
-- name: Update packages
+- name: Update package list
   tags: packages
-  apt: update_cache=yes upgrade=dist
+  apt: update_cache=yes
+
+- name:  Dist upgrade packages
+  tags: packages
+  apt: update_cache=no upgrade=dist
+  when: swift_dist_upgrade
 
 - name: Add swiftops user
   tags: keys
