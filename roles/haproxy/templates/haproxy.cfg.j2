@@ -21,7 +21,7 @@ global
         group haproxy
         daemon
         
-        stats socket /var/run/haproxy.sock mode 600 level admin
+        stats socket /var/run/haproxy.sock mode 600 level admin user {{swift_oper_user}}
         stats timeout 2m
 
 
