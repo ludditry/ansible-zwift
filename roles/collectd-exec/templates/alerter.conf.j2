@@ -3,6 +3,11 @@
 pagerduty_domain = {{swift_pagerduty_domain}}
 service_key = {{swift_pagerduty_service_key}}
 alerter = pagerduty
+secondary_alerter = collectd
+log_alerts = true
+log_logfile = true
+log_dir = {{swift_alert_log_path}}
+
 {% else %}
 alerter = collectd
 {% endif %}
