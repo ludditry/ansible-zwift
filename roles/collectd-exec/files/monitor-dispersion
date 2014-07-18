@@ -6,6 +6,8 @@ import re
 import subprocess
 import socket
 import time
+import json
+import tempfile
 
 CONF = alerter.config.CONF
 LOG = alerter.log.LOG
@@ -13,18 +15,22 @@ ALERTER = alerter.alert.ALERTER
 
 
 def get_dispersion():
-    devnull = open(os.devnull, 'w')
     obj_dispersion = 100.0
     con_dispersion = 100.0
-    
-    for line in subprocess.check_output(['swift-dispersion-report'], stderr=devnull).split('\n'):
-        matchdata = re.match('^([0-9\.]+)% of container.*$', line)
-        if matchdata:
-            con_dispersion = int(float(matchdata.group(1)))
-
-        matchdata = re.match('^([0-9\.]+)% of object.*$', line)
-        if matchdata:
-            obj_dispersion = int(float(matchdata.group(1)))
+    error_file = tempfile.TemporaryFile()
+    try:
+        dispersion_info = json.loads(subprocess.check_output(
+            ['swift-dispersion-report', '-j'],
+            stderr=error_file))
+    except subprocess.CalledProcessError, e:
+        errors = error_file.read()
+        LOG.error("%s returned code %s with output %s" % 
+                  (e.cmd, e.returncode, e.output + errors))
+        ALERTER.failure("%s returned code %s with output %s" % 
+                        (e.cmd, e.returncode, e.output + errors))
+        return None, None
+    con_dispersion = dispersion_info['container']['pct_found']
+    obj_dispersion = dispersion_info['object']['pct_found']
 
     return obj_dispersion, con_dispersion
 
@@ -33,23 +39,15 @@ try:
     interval = CONF.get('interval', 300)
 
     o, c = get_dispersion()
-
-    print 'PUTVAL "%s/swift-dispersion/gauge-container" interval=%d %d:%d' % (
-        host, interval, int(time.time()), c)
-
-    print 'PUTVAL "%s/swift-dispersion/gauge-object" interval=%d %d:%d' % (
-        host, interval, int(time.time()), o)
-
-    if o != 100 or c != 100:
-        ALERTER.failure('dispersion', 'dispersion failure', description='low dispersion: %d%%/%d%%' % (o, c))
+    if o is not None and c is not None:
+        print 'PUTVAL "%s/swift-dispersion/gauge-container" interval=%d %d:%d' \
+            % (host, interval, int(time.time()), c)
+        print 'PUTVAL "%s/swift-dispersion/gauge-object" interval=%d %d:%d' % (
+            host, interval, int(time.time()), o)
+        if o != 100 or c != 100:
+            ALERTER.failure('dispersion', 'dispersion failure', description='low dispersion: %d%%/%d%%' % (o, c))
 except Exception as e:
     ALERTER.failure('dispersion', 'dispersion monitor exploded',
                     description='Monitoring script died: %s' % str(e))
 
 time.sleep(interval)
-
-
-            
-            
-
- 
