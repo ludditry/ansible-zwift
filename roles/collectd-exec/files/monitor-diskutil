@@ -46,19 +46,21 @@ def get_utilization(disk):
 mount_path = CONF.get('mount_path', '/srv/node')
 disk_alert_threshold = CONF.get('alert_threshold', 80)
 interval = CONF.get('interval', 600)
+print disk_alert_threshold
 
-mounts, unmounts = find_monitored_disks(mount_path)
+while True:
+    mounts, unmounts = find_monitored_disks(mount_path)
 
-host = socket.gethostname()
+    host = socket.gethostname()
 
-for disk in unmounts:
-    LOG.error('Disk %s is unmounted' % disk)
-    ALERTER.failure(disk, 'unmounted device', description='host %s: device %s unmounted' % (host, disk))
+    for disk in unmounts:
+        LOG.error('Disk %s is unmounted' % disk)
+        ALERTER.failure(disk, 'unmounted device', description='host %s: device %s unmounted' % (host, disk))
 
-for disk in mounts:
-    percent_used = get_utilization(disk)
-    if percent_used > disk_alert_threshold:
-        LOG.error('host %s: Disk %s is over %d%% utilization' % (host, disk, disk_alert_threshold))
-        ALERTER.failure(disk, 'high utilization', description='host %s: device %s utilization at %d%%' % (host, disk, disk_alert_threshold))
-
-time.sleep(interval)
+    for disk in mounts:
+        percent_used = get_utilization(disk)
+        print percent_used
+        if percent_used > disk_alert_threshold:
+            LOG.error('host %s: Disk %s is over %d%% utilization' % (host, disk, disk_alert_threshold))
+            ALERTER.failure(disk, 'high utilization', description='host %s: device %s utilization at %d%%' % (host, disk, disk_alert_threshold))
+    time.sleep(interval)
