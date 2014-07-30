@@ -14,3 +14,4 @@ if [[ "$HW" -gt "$(cat /var/cache/monitoring/hw)" ]]; then
 fi
 
 echo "$HW" | sudo tee "$cache" & > /dev/null
+sleep 3600
