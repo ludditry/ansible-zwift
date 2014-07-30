@@ -38,7 +38,7 @@ def find_monitored_disks(mount_path):
 
 def get_utilization(disk):
     svfs = os.statvfs(disk)
-    percent = int(100 - (svfs.f_bfree * 100 / svfs.f_blocks))
+    percent = int(100 - (svfs.f_bfree * 100 / max(svfs.f_blocks, 1)))
     LOG.debug('disk %s: %d%%' % (disk, percent))
     return percent
 
