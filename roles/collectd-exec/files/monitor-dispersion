@@ -34,20 +34,21 @@ def get_dispersion():
 
     return obj_dispersion, con_dispersion
 
-try:
-    host = socket.gethostname()
-    interval = CONF.get('interval', 300)
+while True:
+    try:
+        host = socket.gethostname()
+        interval = CONF.get('interval', 300)
 
-    o, c = get_dispersion()
-    if o is not None and c is not None:
-        print 'PUTVAL "%s/swift-dispersion/gauge-container" interval=%d %d:%d' \
-            % (host, interval, int(time.time()), c)
-        print 'PUTVAL "%s/swift-dispersion/gauge-object" interval=%d %d:%d' % (
-            host, interval, int(time.time()), o)
-        if o != 100 or c != 100:
-            ALERTER.failure('dispersion', 'dispersion failure', description='low dispersion: %d%%/%d%%' % (o, c))
-except Exception as e:
-    ALERTER.failure('dispersion', 'dispersion monitor exploded',
-                    description='Monitoring script died: %s' % str(e))
+        o, c = get_dispersion()
+        if o is not None and c is not None:
+            print 'PUTVAL "%s/swift-dispersion/gauge-container" interval=%d %d:%d' \
+                % (host, interval, int(time.time()), c)
+            print 'PUTVAL "%s/swift-dispersion/gauge-object" interval=%d %d:%d' % (
+                host, interval, int(time.time()), o)
+            if o != 100 or c != 100:
+                ALERTER.failure('dispersion', 'dispersion failure', description='low dispersion: %d%%/%d%%' % (o, c))
+    except Exception as e:
+        ALERTER.failure('dispersion', 'dispersion monitor exploded',
+                        description='Monitoring script died: %s' % str(e))
 
-time.sleep(interval)
+    time.sleep(interval)
