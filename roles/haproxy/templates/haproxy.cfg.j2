@@ -66,7 +66,7 @@ frontend https-in
 
          use_backend auth if is_auth_api
          use_backend swift if is_swift_api
-         use_backend swift is is_user_management
+         use_backend swift if is_user_management
          use_backend other if !is_swift_api !is_auth_api
 
 backend swift
