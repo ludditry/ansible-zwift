@@ -91,6 +91,11 @@ swift_users:
   "admin": true
   "reseller_admin": false
 
+# dispersion info
+swift_dispersion_tenant: dispersion
+swift_dispersion_user: reporter
+swift_dispersion_key: dispersion
+
 #zwift sys image data
 zwift_daemon_config_dir: "/opt/zerovm/daemon"
 zwift_daemons:
