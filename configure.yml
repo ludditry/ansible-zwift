@@ -122,7 +122,7 @@
   tags: proxy
   hosts: proxy
   roles:
-  - {role: proxy, swift_allow_account_management: false}
+  - {role: proxy, swift_allow_account_management: true}
 
 - name: Auth proxy configuration
   tags: proxy
