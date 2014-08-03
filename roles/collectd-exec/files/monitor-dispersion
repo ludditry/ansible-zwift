@@ -38,14 +38,15 @@ while True:
     try:
         host = socket.gethostname()
         interval = CONF.get('interval', 300)
-
+        object_threshold = CONF.get('object_threshold', 100)
+        container_threshold = CONF.get('container_threshold', 100)
         o, c = get_dispersion()
         if o is not None and c is not None:
             print 'PUTVAL "%s/swift-dispersion/gauge-container" interval=%d %d:%d' \
                 % (host, interval, int(time.time()), c)
             print 'PUTVAL "%s/swift-dispersion/gauge-object" interval=%d %d:%d' % (
                 host, interval, int(time.time()), o)
-            if o != 100 or c != 100:
+            if o < object_threshold or c < container_threshold:
                 ALERTER.failure('dispersion', 'dispersion failure', description='low dispersion: %d%%/%d%%' % (o, c))
     except Exception as e:
         ALERTER.failure('dispersion', 'dispersion monitor exploded',
