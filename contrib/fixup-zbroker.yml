@@ -1,0 +1,9 @@
+---
+- name: do the thing
+  hosts: storage
+  tasks:
+  - name: drop /etc/zsys-interface
+    template: src=templates/zsys-interface.j2 dest=/etc/zsys-interface owner=root mode=0644
+
+  - name: restart zbroker
+    service: name=zbroker state=restarted
