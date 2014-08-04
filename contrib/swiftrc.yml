@@ -1,0 +1,12 @@
+---
+- name: get facts
+  hosts: all
+
+- name: swiftrc
+  hosts: localhost
+  tasks:
+    - name: drop a swiftrc
+      local_action:
+        module: template
+        src: templates/swiftrc.j2
+        dest: "{{rc_path}}"
