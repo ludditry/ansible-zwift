@@ -1,0 +1,7 @@
+---
+- name: swiftrc
+  hosts: proxy
+  tasks:
+    - name: drop a swiftrc
+      template: src=templates/swiftrc.j2 dest="{{rc_path}}"
+      delegate_to: localhost

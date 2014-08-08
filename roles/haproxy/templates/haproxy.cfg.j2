@@ -20,7 +20,7 @@ global
         user haproxy
         group haproxy
         daemon
-        
+
         stats socket /var/run/haproxy.sock mode 600 level admin user {{swift_oper_user}}
         stats timeout 2m
 
@@ -43,23 +43,30 @@ defaults
         errorfile 503 /etc/haproxy/errors/503.http
         errorfile 504 /etc/haproxy/errors/504.http
 
+{% if ansible_hostname not in groups['proxy'] %}
 frontend http-in
          mode http
          option http-server-close
          bind *:80
          redirect scheme https code 301
+{% endif %}
 
 frontend https-in
          option http-server-close
-         redirect scheme https if !{ ssl_fc }
+#         redirect scheme https if !{ ssl_fc }
          bind *:443 ssl crt /etc/haproxy/haproxy.pem
          acl is_internal src {{swift_nets['management']}}
-         acl is_swift_api url_beg /v1 /auth /open
+         acl is_swift_api url_beg /v1 /auth/v1.0 /open
          acl is_auth_api url_beg /login /profile
-         acl is_nexe_request hdr_cnt(x-zerovm-execute) 1
-         use_backend swift if is_nexe_request
-         use_backend auth if is_auth_api or is_internal
+         acl is_user_management url_beg /auth/v2
+#         acl is_nexe_request hdr_cnt(x-zerovm-execute) 1
+
+         block if is_user_management !is_internal
+#         use_backend swift if is_nexe_request
+
+         use_backend auth if is_auth_api
          use_backend swift if is_swift_api
+         use_backend swift if is_user_management
          use_backend other if !is_swift_api !is_auth_api
 
 backend swift
