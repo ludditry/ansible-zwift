@@ -10,6 +10,12 @@ import json
 import os
 import socket
 import time
+import alerter
+
+
+CONF=alerter.config.CONF
+LOG=alerter.log.LOG
+ALERTER=alerter.alert.ALERTER
 
 
 def reducer_program(reducer_file=None):
@@ -161,14 +167,13 @@ def main():
     
         if res.content == 'Ok':
             failed = False
-    except:
+    except Exception:
         with open('/tmp/zbroker_test.error', 'w') as f:
+            LOG.error("zbroker test traceback: %s" %traceback.format_exc())
             traceback.print_exc(None, f)
 
     if failed:
-        sys.stdout.write('PUTNOTIF message="zbroker failure" severity=failure time=%d host=%s\n' % (
-            int(time.time()), socket.gethostname()))
-        sys.stdout.flush()
+        ALERTER.failure('zbroker', 'zbroker failure')
 
 if __name__ == "__main__":
     while True:
