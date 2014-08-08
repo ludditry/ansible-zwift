@@ -1,0 +1,6 @@
+#!/bin/bash
+
+sudo /etc/init.d/quagga stop
+sleep 5
+sudo ip r del dev lo {{ecmp_ip}}/32
+sudo ip a del dev lo {{ecmp_ip}}/32

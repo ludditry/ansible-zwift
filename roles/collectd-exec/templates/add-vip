@@ -1,0 +1,5 @@
+#!/bin/bash
+
+sudo ip addr add 173.203.160.168/32 dev lo
+sudo route add 173.203.160.168/32 dev lo
+sudo /etc/init.d/quagga start
