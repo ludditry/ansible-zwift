@@ -142,6 +142,10 @@ use = egg:swauth#swauth
 super_admin_key = {{swift_swauth_key}}
 default_swift_cluster = {{swift_swauth_default_cluster}}
 
+[filter:job-chain]
+use = egg:zerocloud#job_chain
+chain_timeout = {{swift_proxy_client_timeout}}
+
 [filter:proxy-query]
 use = egg:zerocloud#proxy_query
 
@@ -166,9 +170,9 @@ zerovm_sysimage_devices = {% for item in zwift_sysimages %}
 
 [pipeline:main]
 {% if swift_auth_type == 'tempauth' %}
-pipeline = catch_errors proxy-logging healthcheck cache ratelimit tempauth proxy-logging proxy-query {% if swift_use_staticweb %}staticweb{% endif %} proxy-server
+pipeline = catch_errors proxy-logging healthcheck cache ratelimit tempauth proxy-logging job-chain proxy-query proxy-server
 {% elif swift_auth_type == 'liteauth' %}
-pipeline = catch_errors proxy-logging healthcheck cache ratelimit liteauth-token oauth-login-g lite-swauth swauth proxy-logging {% if swift_use_staticweb %}staticweb{% endif %} proxy-server
+pipeline = catch_errors proxy-logging healthcheck cache ratelimit liteauth-token oauth-login-g lite-swauth swauth proxy-logging job-chain proxy-server
 {% elif swift_auth_type == 'swauth' %}
-pipeline = catch_errors proxy-logging healthcheck cache ratelimit liteauth-token swauth proxy-logging proxy-query {% if swift_use_staticweb %}staticweb{% endif %} proxy-server
+pipeline = catch_errors proxy-logging healthcheck cache ratelimit liteauth-token swauth proxy-logging job-chain proxy-query proxy-server
 {% endif %}

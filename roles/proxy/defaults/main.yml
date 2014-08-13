@@ -27,5 +27,3 @@ fb_auth_service_domain: "{{swift_swauth_cluster_domain}}"
 
 swift_proxy_node_timeout: 60
 swift_proxy_client_timeout: 60
-
-swift_use_staticweb: false
